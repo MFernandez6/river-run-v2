@@ -126,14 +126,14 @@ export default function HomePage() {
       {/* Hero Section */}
       <section
         id="home"
-        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16"
+        className="relative min-h-screen sm:min-h-screen md:min-h-screen lg:min-h-screen flex items-center justify-center overflow-hidden pt-16"
       >
         {/* Hero Background Image */}
         <div className="absolute inset-0">
           <img
             src="/images/building.jpg"
             alt="River Run Condominium Building"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center sm:object-center md:object-center lg:object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-amber-900/50 via-amber-800/40 to-amber-900/60"></div>
         </div>
@@ -379,7 +379,7 @@ export default function HomePage() {
                 alt: "Side View of River Run Condominium",
                 title: "Architectural Profile",
                 description:
-                  "Stunning side view showcasing the building&apos;s design",
+                  "Stunning side view showcasing the building's design",
               },
               {
                 src: "/images/back-view.jpg",
@@ -443,12 +443,12 @@ export default function HomePage() {
       </section>
 
       {/* Parallax Waterfront Section */}
-      <section className="relative py-20 overflow-hidden">
+      <section className="relative py-12 sm:py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="/images/bird-eye.jpg"
             alt="Aerial View of River Run Condominium"
-            className="w-full h-full object-cover parallax"
+            className="w-full h-full object-cover object-center sm:object-center md:object-center lg:object-center parallax"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-amber-900/80 via-amber-800/70 to-amber-900/80"></div>
         </div>
@@ -651,84 +651,144 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                name: "Sarah Johnson",
-                position: "President",
-                email: "RRCBoardEmail@Gmail.com",
-                phone: "(305) 555-0101",
-                initials: "SJ",
-              },
-              {
-                name: "Michael Rodriguez",
-                position: "Vice President",
-                email: "RRCBoardEmail@Gmail.com",
-                phone: "(305) 555-0102",
-                initials: "MR",
-              },
-              {
-                name: "Jennifer Chen",
-                position: "Treasurer",
-                email: "RRCBoardEmail@Gmail.com",
-                phone: "(305) 555-0103",
-                initials: "JC",
-              },
-              {
-                name: "David Thompson",
-                position: "Secretary",
-                email: "RRCBoardEmail@Gmail.com",
-                phone: "(305) 555-0104",
-                initials: "DT",
-              },
-              {
-                name: "Maria Gonzalez",
-                position: "Board Member",
-                email: "RRCBoardEmail@Gmail.com",
-                phone: "(305) 555-0105",
-                initials: "MG",
-              },
-              {
-                name: "Robert Kim",
-                position: "Board Member",
-                email: "RRCBoardEmail@Gmail.com",
-                phone: "(305) 555-0106",
-                initials: "RK",
-              },
-            ].map((member, index) => (
-              <motion.div
-                key={member.name}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                  <CardHeader className="text-center pb-3">
-                    <Avatar className="w-16 h-16 mx-auto mb-3">
-                      <AvatarImage src={`/api/placeholder/64/64`} />
-                      <AvatarFallback className="bg-amber-100 text-amber-800 text-lg font-semibold">
-                        {member.initials}
-                      </AvatarFallback>
-                    </Avatar>
-                    <CardTitle className="text-lg">{member.name}</CardTitle>
-                    <CardDescription className="text-amber-700 font-medium text-sm">
-                      {member.position}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0 space-y-2">
-                    <div className="flex items-center space-x-2 text-xs text-gray-600">
-                      <Mail className="h-3 w-3" />
-                      <span className="truncate">{member.email}</span>
+          <div className="relative">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 blur-sm">
+              {[
+                {
+                  name: "Sarah Johnson",
+                  position: "President",
+                  email: "RRCBoardEmail@Gmail.com",
+                  phone: "(305) 555-0101",
+                  initials: "SJ",
+                },
+                {
+                  name: "Michael Rodriguez",
+                  position: "Vice President",
+                  email: "RRCBoardEmail@Gmail.com",
+                  phone: "(305) 555-0102",
+                  initials: "MR",
+                },
+                {
+                  name: "Jennifer Chen",
+                  position: "Treasurer",
+                  email: "RRCBoardEmail@Gmail.com",
+                  phone: "(305) 555-0103",
+                  initials: "JC",
+                },
+                {
+                  name: "David Thompson",
+                  position: "Secretary",
+                  email: "RRCBoardEmail@Gmail.com",
+                  phone: "(305) 555-0104",
+                  initials: "DT",
+                },
+                {
+                  name: "Maria Gonzalez",
+                  position: "Board Member",
+                  email: "RRCBoardEmail@Gmail.com",
+                  phone: "(305) 555-0105",
+                  initials: "MG",
+                },
+                {
+                  name: "Robert Kim",
+                  position: "Board Member",
+                  email: "RRCBoardEmail@Gmail.com",
+                  phone: "(305) 555-0106",
+                  initials: "RK",
+                },
+              ].map((member, index) => (
+                <motion.div
+                  key={member.name}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                    <CardHeader className="text-center pb-3">
+                      <Avatar className="w-16 h-16 mx-auto mb-3">
+                        <AvatarImage src={`/api/placeholder/64/64`} />
+                        <AvatarFallback className="bg-amber-100 text-amber-800 text-lg font-semibold">
+                          {member.initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <CardTitle className="text-lg">{member.name}</CardTitle>
+                      <CardDescription className="text-amber-700 font-medium text-sm">
+                        {member.position}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-0 space-y-2">
+                      <div className="flex items-center space-x-2 text-xs text-gray-600">
+                        <Mail className="h-3 w-3" />
+                        <span className="truncate">{member.email}</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-xs text-gray-600">
+                        <Phone className="h-3 w-3" />
+                        <span>{member.phone}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Board Election Notice Overlay */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              viewport={{ once: true }}
+              className="absolute inset-0 flex items-center justify-center z-20"
+            >
+              <div className="relative bg-white/95 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-2xl max-w-4xl mx-4 overflow-hidden">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-5">
+                  <div className="absolute top-0 left-0 w-32 h-32 bg-amber-600 rounded-full -translate-x-16 -translate-y-16"></div>
+                  <div className="absolute bottom-0 right-0 w-24 h-24 bg-amber-700 rounded-full translate-x-12 translate-y-12"></div>
+                  <div className="absolute top-1/2 left-1/2 w-16 h-16 bg-amber-500 rounded-full -translate-x-8 -translate-y-8"></div>
+                </div>
+
+                <div className="relative z-10">
+                  <div className="flex items-center justify-center mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-amber-600 to-amber-700 rounded-full flex items-center justify-center shadow-lg">
+                      <Calendar className="h-8 w-8 text-white" />
                     </div>
-                    <div className="flex items-center space-x-2 text-xs text-gray-600">
-                      <Phone className="h-3 w-3" />
-                      <span>{member.phone}</span>
+                  </div>
+
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                      2026 Board Election
+                    </h3>
+                    <p className="text-lg text-gray-700 mb-4 max-w-3xl mx-auto leading-relaxed">
+                      River Run Condominium will be conducting elections for the
+                      2026 Board of Directors shortly. We are committed to
+                      maintaining transparency and community involvement in our
+                      governance process.
+                    </p>
+                    <p className="text-base text-gray-600 mb-6 max-w-2xl mx-auto">
+                      The website will be updated with the new board member
+                      information immediately following the election results.
+                    </p>
+
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                      <div className="flex items-center space-x-2 text-amber-700">
+                        <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+                        <span className="text-sm font-medium">
+                          Election Process Underway
+                        </span>
+                      </div>
+                      <div className="hidden sm:block w-px h-4 bg-amber-300"></div>
+                      <div className="flex items-center space-x-2 text-amber-700">
+                        <Bell className="h-4 w-4" />
+                        <span className="text-sm font-medium">
+                          Updates Coming Soon
+                        </span>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
