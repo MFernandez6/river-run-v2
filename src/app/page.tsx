@@ -26,6 +26,11 @@ import {
   Coffee,
   ShoppingBag,
   Plane,
+  User,
+  Globe,
+  AlertTriangle,
+  Printer,
+  Menu,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,6 +46,7 @@ import { Separator } from "@/components/ui/separator";
 
 export default function HomePage() {
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Building location coordinates (Miami, FL area)
   const buildingLocation = {
@@ -108,19 +114,66 @@ export default function HomePage() {
               <span className="text-lg font-bold text-gray-800">River Run</span>
             </motion.div>
             <div className="hidden md:flex space-x-6">
-              {["Home", "About", "Board", "News", "Contact"].map((item) => (
+              {[
+                { name: "Home", href: "#home" },
+                { name: "About", href: "#about" },
+                { name: "Board", href: "#board" },
+                { name: "Prop. Mgmt", href: "#property-management" },
+                { name: "News", href: "#news" },
+                { name: "Contact", href: "#contact" },
+              ].map((item) => (
                 <motion.a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
+                  key={item.name}
+                  href={item.href}
                   className="text-sm font-medium text-gray-700 hover:text-amber-700 transition-colors"
                   whileHover={{ scale: 1.05 }}
                 >
-                  {item}
+                  {item.name}
                 </motion.a>
               ))}
             </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg text-gray-700 hover:text-amber-700 hover:bg-white/10 transition-colors"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
           </div>
         </div>
+
+        {/* Mobile Menu Dropdown */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden bg-white/95 backdrop-blur-sm border-t border-white/20"
+            >
+              <div className="px-4 py-4 space-y-3">
+                {[
+                  { name: "Home", href: "#home" },
+                  { name: "About", href: "#about" },
+                  { name: "Board", href: "#board" },
+                  { name: "Property Management", href: "#property-management" },
+                  { name: "News", href: "#news" },
+                  { name: "Contact", href: "#contact" },
+                ].map((item) => (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block py-2 text-sm font-medium text-gray-700 hover:text-amber-700 transition-colors"
+                  >
+                    {item.name}
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.nav>
 
       {/* Hero Section */}
@@ -1039,6 +1092,216 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Property Management Section */}
+      <section id="property-management" className="py-16 bg-white/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+              Property Management
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Emergency contacts and property management services for River Run
+              Condominium
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Melissa Sanchez Card */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                <CardHeader className="text-center pb-3">
+                  <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <User className="h-10 w-10 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl font-bold text-gray-800 mb-2">
+                    Melissa Sanchez
+                  </CardTitle>
+                  <CardDescription className="text-amber-700 font-semibold text-lg">
+                    Association Property Manager / LCAM
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-gray-600 text-center mb-6">
+                    Your primary contact for emergency situations, maintenance
+                    requests, and property management services.
+                  </p>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <Phone className="h-4 w-4 text-amber-600" />
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600">Phone</p>
+                        <a
+                          href="tel:305-251-3848"
+                          className="text-gray-800 hover:text-amber-600 font-semibold"
+                        >
+                          305-251-3848 Ext: 110
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <Mail className="h-4 w-4 text-amber-600" />
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600">Email</p>
+                        <a
+                          href="mailto:melissa@caribbeanproperty.cc"
+                          className="text-gray-800 hover:text-amber-600 font-semibold text-sm"
+                        >
+                          melissa@caribbeanproperty.cc
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <MapPin className="h-4 w-4 text-amber-600" />
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600">Office Address</p>
+                        <p className="text-gray-800 text-sm">
+                          12301 SW 132 Ct.
+                          <br />
+                          Miami, FL 33186
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <Globe className="h-4 w-4 text-amber-600" />
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600">Website</p>
+                        <a
+                          href="http://www.caribbeanproperty.cc"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-gray-800 hover:text-amber-600 font-semibold text-sm"
+                        >
+                          caribbeanproperty.cc
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                    <div className="flex items-start space-x-3">
+                      <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-gray-800 font-semibold text-sm mb-1">
+                          Emergency Contact
+                        </p>
+                        <p className="text-gray-600 text-xs">
+                          For urgent maintenance issues, security concerns, or
+                          emergency situations, contact Melissa Sanchez directly
+                          at the phone number above.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Caribbean Property Management Card */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                <CardHeader className="text-center pb-3">
+                  <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Building2 className="h-10 w-10 text-white" />
+                  </div>
+                  <CardTitle className="text-xl font-bold text-gray-800 mb-2">
+                    Caribbean Property Management
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-gray-600 text-center mb-6">
+                    Professional property management services for River Run
+                    Condominium, ensuring the highest standards of maintenance,
+                    security, and community management.
+                  </p>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <MapPin className="h-4 w-4 text-amber-600" />
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600">Office Address</p>
+                        <p className="text-gray-800 text-sm">
+                          12301 SW 132 Court
+                          <br />
+                          Miami, FL 33186
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <Phone className="h-4 w-4 text-amber-600" />
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600">Office Phone</p>
+                        <a
+                          href="tel:305-251-3848"
+                          className="text-gray-800 hover:text-amber-600 font-semibold"
+                        >
+                          305-251-3848
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <Printer className="h-4 w-4 text-amber-600" />
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600">Fax</p>
+                        <p className="text-gray-800 font-semibold">
+                          305-251-3849
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <Mail className="h-4 w-4 text-amber-600" />
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600">General Email</p>
+                        <a
+                          href="mailto:info@caribbeanproperty.cc"
+                          className="text-gray-800 hover:text-amber-600 font-semibold text-sm"
+                        >
+                          info@caribbeanproperty.cc
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <a
+                      href="http://www.caribbeanproperty.cc"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full inline-flex items-center justify-center bg-gradient-to-r from-amber-500 to-amber-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-amber-600 hover:to-amber-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    >
+                      <Globe className="h-4 w-4 mr-2" />
+                      Visit Website
+                    </a>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Contact Section */}
       <section
         id="contact"
@@ -1213,6 +1476,12 @@ export default function HomePage() {
                   className="block text-gray-400 hover:text-white transition-colors text-sm"
                 >
                   Contact
+                </a>
+                <a
+                  href="#property-management"
+                  className="block text-gray-400 hover:text-white transition-colors text-sm"
+                >
+                  Property Management
                 </a>
                 <button
                   onClick={() =>
