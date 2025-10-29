@@ -1111,189 +1111,328 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Melissa Sanchez Card */}
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Elizabeth Perez Garcia Card */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+              <Card className="bg-white/95 backdrop-blur-sm border border-amber-200/50 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 h-full">
                 <CardHeader className="text-center pb-3">
                   <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <User className="h-10 w-10 text-white" />
+                    <Building2 className="h-10 w-10 text-white" />
                   </div>
-                  <CardTitle className="text-2xl font-bold text-gray-800 mb-2">
-                    Melissa Sanchez
+                  <CardTitle className="text-xl font-bold text-gray-800 mb-2">
+                    Caribbean Property Management Inc.
                   </CardTitle>
                   <CardDescription className="text-amber-700 font-semibold text-lg">
-                    Association Property Manager / LCAM
+                    Elizabeth Perez Garcia
+                    <br />
+                    Contact
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-gray-600 text-center mb-6">
-                    Your primary contact for emergency situations, maintenance
-                    requests, and property management services.
+                    Primary contact for property management services and general
+                    inquiries.
                   </p>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <Phone className="h-4 w-4 text-amber-600" />
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-600">Phone</p>
-                        <a
-                          href="tel:305-251-3848"
-                          className="text-gray-800 hover:text-amber-600 font-semibold"
-                        >
-                          305-251-3848 Ext: 110
-                        </a>
+                  <div className="space-y-4">
+                    {/* Elizabeth Contact */}
+                    <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <User className="h-5 w-5 text-amber-600" />
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">
+                            Elizabeth Perez Garcia
+                          </p>
+                          <p className="text-gray-600 text-xs">
+                            Primary Contact
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start space-x-3">
+                        <Mail className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <a
+                            href="mailto:efperezgarcia@caribbeanproperty.cc"
+                            className="text-gray-800 hover:text-amber-600 font-semibold text-sm break-all"
+                          >
+                            efperezgarcia@caribbeanproperty.cc
+                          </a>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-3">
-                      <Mail className="h-4 w-4 text-amber-600" />
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-600">Email</p>
-                        <a
-                          href="mailto:melissa@caribbeanproperty.cc"
-                          className="text-gray-800 hover:text-amber-600 font-semibold text-sm"
-                        >
-                          melissa@caribbeanproperty.cc
-                        </a>
+                    {/* General Office Info */}
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <MapPin className="h-4 w-4 text-amber-600" />
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-600">
+                            Office Address
+                          </p>
+                          <p className="text-gray-800 text-sm">
+                            12301 SW 132 Court
+                            <br />
+                            Miami, FL 33186
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-3">
+                        <Phone className="h-4 w-4 text-amber-600" />
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-600">General Phone</p>
+                          <a
+                            href="tel:305-251-3848"
+                            className="text-gray-800 hover:text-amber-600 font-semibold"
+                          >
+                            305-251-3848
+                          </a>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-3">
+                        <Printer className="h-4 w-4 text-amber-600" />
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-600">Fax</p>
+                          <p className="text-gray-800 font-semibold">
+                            305-251-3849
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start space-x-3">
+                        <Mail className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-gray-600">General Email</p>
+                          <a
+                            href="mailto:info@caribbeanproperty.cc"
+                            className="text-gray-800 hover:text-amber-600 font-semibold text-sm break-all"
+                          >
+                            info@caribbeanproperty.cc
+                          </a>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-3">
-                      <MapPin className="h-4 w-4 text-amber-600" />
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-600">Office Address</p>
-                        <p className="text-gray-800 text-sm">
-                          12301 SW 132 Ct.
-                          <br />
-                          Miami, FL 33186
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-3">
-                      <Globe className="h-4 w-4 text-amber-600" />
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-600">Website</p>
-                        <a
-                          href="http://www.caribbeanproperty.cc"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-gray-800 hover:text-amber-600 font-semibold text-sm"
-                        >
-                          caribbeanproperty.cc
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
-                    <div className="flex items-start space-x-3">
-                      <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="text-gray-800 font-semibold text-sm mb-1">
-                          Emergency Contact
-                        </p>
-                        <p className="text-gray-600 text-xs">
-                          For urgent maintenance issues, security concerns, or
-                          emergency situations, contact Melissa Sanchez directly
-                          at the phone number above.
-                        </p>
-                      </div>
+                    <div className="mt-4">
+                      <a
+                        href="http://www.caribbeanproperty.cc"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full inline-flex items-center justify-center bg-gradient-to-r from-amber-500 to-amber-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-amber-600 hover:to-amber-700 transition-all duration-300 shadow-lg hover:shadow-xl text-sm"
+                      >
+                        <Globe className="h-4 w-4 mr-2" />
+                        Visit Website
+                      </a>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </motion.div>
 
-            {/* Caribbean Property Management Card */}
+            {/* Juan & General Info Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <Card className="bg-white/95 backdrop-blur-sm border border-amber-200/50 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 h-full">
+                <CardHeader className="text-center pb-3">
+                  <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Building2 className="h-10 w-10 text-white" />
+                  </div>
+                  <CardTitle className="text-xl font-bold text-gray-800 mb-2">
+                    Caribbean Property Management Inc.
+                  </CardTitle>
+                  <CardDescription className="text-amber-700 font-semibold text-lg">
+                    General Information
+                    <br />
+                    Contact
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-gray-600 text-center mb-6">
+                    General office information and secondary contact for
+                    property management services.
+                  </p>
+
+                  <div className="space-y-4">
+                    {/* Juan Contact */}
+                    <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <User className="h-5 w-5 text-amber-600" />
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">
+                            Juan
+                          </p>
+                          <p className="text-gray-600 text-xs">
+                            Secondary Contact
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start space-x-3">
+                        <Mail className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <a
+                            href="mailto:juan@caribbeanproperty.cc"
+                            className="text-gray-800 hover:text-amber-600 font-semibold text-sm break-all"
+                          >
+                            juan@caribbeanproperty.cc
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* General Office Info */}
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <MapPin className="h-4 w-4 text-amber-600" />
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-600">
+                            Office Address
+                          </p>
+                          <p className="text-gray-800 text-sm">
+                            12301 SW 132 Court
+                            <br />
+                            Miami, FL 33186
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-3">
+                        <Phone className="h-4 w-4 text-amber-600" />
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-600">General Phone</p>
+                          <a
+                            href="tel:305-251-3848"
+                            className="text-gray-800 hover:text-amber-600 font-semibold"
+                          >
+                            305-251-3848
+                          </a>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-3">
+                        <Printer className="h-4 w-4 text-amber-600" />
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-600">Fax</p>
+                          <p className="text-gray-800 font-semibold">
+                            305-251-3849
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start space-x-3">
+                        <Mail className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-gray-600">General Email</p>
+                          <a
+                            href="mailto:info@caribbeanproperty.cc"
+                            className="text-gray-800 hover:text-amber-600 font-semibold text-sm break-all"
+                          >
+                            info@caribbeanproperty.cc
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <a
+                        href="http://www.caribbeanproperty.cc"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full inline-flex items-center justify-center bg-gradient-to-r from-amber-500 to-amber-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-amber-600 hover:to-amber-700 transition-all duration-300 shadow-lg hover:shadow-xl text-sm"
+                      >
+                        <Globe className="h-4 w-4 mr-2" />
+                        Visit Website
+                      </a>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Emergency & Maintenance Contact Card */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+              <Card className="bg-white/95 backdrop-blur-sm border border-amber-200/50 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 h-full">
                 <CardHeader className="text-center pb-3">
-                  <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Building2 className="h-10 w-10 text-white" />
+                  <div className="w-20 h-20 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <AlertTriangle className="h-10 w-10 text-white" />
                   </div>
                   <CardTitle className="text-xl font-bold text-gray-800 mb-2">
-                    Caribbean Property Management
+                    Emergency & Maintenance
                   </CardTitle>
+                  <CardDescription className="text-red-700 font-semibold text-lg">
+                    Urgent Contact Information
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-gray-600 text-center mb-6">
-                    Professional property management services for River Run
-                    Condominium, ensuring the highest standards of maintenance,
-                    security, and community management.
+                    For emergency situations and urgent maintenance issues.
                   </p>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <MapPin className="h-4 w-4 text-amber-600" />
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-600">Office Address</p>
-                        <p className="text-gray-800 text-sm">
-                          12301 SW 132 Court
-                          <br />
-                          Miami, FL 33186
-                        </p>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <Phone className="h-5 w-5 text-red-600" />
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">
+                            Emergency Line
+                          </p>
+                          <a
+                            href="tel:305-251-3848"
+                            className="text-red-700 hover:text-red-800 font-bold text-lg"
+                          >
+                            305.251.3848
+                          </a>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-3">
-                      <Phone className="h-4 w-4 text-amber-600" />
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-600">Office Phone</p>
-                        <a
-                          href="tel:305-251-3848"
-                          className="text-gray-800 hover:text-amber-600 font-semibold"
-                        >
-                          305-251-3848
-                        </a>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-3">
-                      <Printer className="h-4 w-4 text-amber-600" />
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-600">Fax</p>
-                        <p className="text-gray-800 font-semibold">
-                          305-251-3849
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-3">
-                      <Mail className="h-4 w-4 text-amber-600" />
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-600">General Email</p>
-                        <a
-                          href="mailto:info@caribbeanproperty.cc"
-                          className="text-gray-800 hover:text-amber-600 font-semibold text-sm"
-                        >
-                          info@caribbeanproperty.cc
-                        </a>
+                    <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                      <div className="flex items-center space-x-3">
+                        <User className="h-5 w-5 text-amber-600" />
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">
+                            On-Site Maintenance
+                          </p>
+                          <p className="text-gray-700 font-semibold">German</p>
+                          <a
+                            href="tel:786-344-3706"
+                            className="text-amber-700 hover:text-amber-800 font-bold"
+                          >
+                            786.344.3706
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-6">
-                    <a
-                      href="http://www.caribbeanproperty.cc"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full inline-flex items-center justify-center bg-gradient-to-r from-amber-500 to-amber-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-amber-600 hover:to-amber-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                    >
-                      <Globe className="h-4 w-4 mr-2" />
-                      Visit Website
-                    </a>
+                  <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex items-start space-x-3">
+                      <AlertTriangle className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-gray-800 font-semibold text-sm mb-1">
+                          When to Use Emergency Contacts
+                        </p>
+                        <p className="text-gray-600 text-xs">
+                          Use the emergency line for urgent maintenance issues,
+                          security concerns, or emergency situations that
+                          require immediate attention. Available 24/7.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
