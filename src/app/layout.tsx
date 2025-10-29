@@ -16,6 +16,37 @@ export const metadata: Metadata = {
   title: "River Run Miami",
   description:
     "River Run Condominium - Luxury waterfront living in Miami, FL. Experience elegant architecture, premium amenities, and direct access to the North River.",
+  openGraph: {
+    title: "River Run Condominium - Luxury Waterfront Living in Miami",
+    description:
+      "Luxury waterfront living in Miami, FL. Experience elegant architecture, premium amenities, and direct access to the North River.",
+    url: "https://river-run-miami.com",
+    siteName: "River Run Condominium",
+    images: [
+      {
+        url: "/images/building.jpg",
+        width: 1200,
+        height: 630,
+        alt: "River Run Condominium Building",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "River Run Condominium - Luxury Waterfront Living in Miami",
+    description:
+      "Luxury waterfront living in Miami, FL. Experience elegant architecture, premium amenities, and direct access to the North River.",
+    images: ["/images/building.jpg"],
+  },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon.svg", type: "image/svg+xml", sizes: "any" },
+    ],
+    apple: [{ url: "/icon.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({
