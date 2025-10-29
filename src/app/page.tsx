@@ -31,6 +31,7 @@ import {
   AlertTriangle,
   Printer,
   Menu,
+  Wifi,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -111,7 +112,9 @@ export default function HomePage() {
               whileHover={{ scale: 1.05 }}
             >
               <Building2 className="h-7 w-7 text-amber-700" />
-              <span className="text-lg font-bold text-gray-800">River Run</span>
+              <span className="text-lg text-gray-800">
+                <span className="font-bold">River Run</span> Condominium
+              </span>
             </motion.div>
             <div className="hidden md:flex space-x-6">
               {[
@@ -218,22 +221,36 @@ export default function HomePage() {
               <Building2 className="h-8 w-8 text-white" />
             </motion.div>
 
-            <motion.h1
-              className="text-5xl md:text-7xl font-extrabold text-white mb-6 tracking-tight"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
-              style={{
-                textShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-                background:
-                  "linear-gradient(135deg, #ffffff 0%, #fef3c7 50%, #f59e0b 100%)",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              River Run
-            </motion.h1>
+            <div className="mb-6">
+              <motion.h1
+                className="text-5xl md:text-7xl font-extrabold text-white mb-2 tracking-tight"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+                style={{
+                  textShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+                  background:
+                    "linear-gradient(135deg, #ffffff 0%, #fef3c7 50%, #f59e0b 100%)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                River Run
+              </motion.h1>
+              <motion.h2
+                className="text-2xl md:text-4xl font-normal text-amber-200 tracking-wide"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                style={{
+                  textShadow: "0 2px 15px rgba(0, 0, 0, 0.4)",
+                  letterSpacing: "0.1em",
+                }}
+              >
+                Condominium
+              </motion.h2>
+            </div>
 
             <motion.p
               className="text-xl md:text-2xl text-amber-100 mb-8 max-w-3xl mx-auto font-medium leading-relaxed"
@@ -551,137 +568,174 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Neighborhood Section */}
+      {/* Recent Announcements & Google Fiber Section */}
       <section className="py-16 bg-gradient-to-r from-amber-50 to-amber-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Recent Announcements */}
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-              Neighborhood Context
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Experience the best of Miami living in one of the city&apos;s most
-              established waterfront communities.
-            </p>
+            <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+              Recent Announcements
+            </h3>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                {
+                  title: "Google Fiber Partnership Completed",
+                  content:
+                    "We are pleased to announce the successful completion of our partnership with Google Fiber, providing ultra-fast internet service included in each residential unit. The installation was completed mid-summer, delivering speeds up to 2 Gigabits per second to all residents.",
+                  date: "July 15, 2025",
+                  icon: <TrendingUp className="h-5 w-5 text-blue-600" />,
+                  type: "Technology",
+                },
+                {
+                  title: "Racquetball Court Demolition",
+                  content:
+                    "The former racquetball court located at the waterfront end of the property has been successfully demolished and converted into a landscaped grass field. Additional improvements and future development plans will be presented for resident input at upcoming board meetings.",
+                  date: "August 23, 2025",
+                  icon: <Shield className="h-5 w-5 text-amber-600" />,
+                  type: "Property",
+                },
+                {
+                  title: "40-Year Recertification Project",
+                  content:
+                    "The building is currently undergoing its mandatory 40-year recertification process. This comprehensive project will span approximately 12 weeks and includes structural inspections, exterior painting updates, and garage facility renovations to ensure continued compliance and safety standards.",
+                  date: "October 25, 2025",
+                  icon: <FileText className="h-5 w-5 text-amber-600" />,
+                  type: "Maintenance",
+                },
+              ].map((announcement, index) => (
+                <motion.div
+                  key={announcement.title}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                          {announcement.icon}
+                        </div>
+                        <Badge
+                          variant="secondary"
+                          className={`text-xs ${
+                            announcement.type === "Maintenance"
+                              ? "bg-amber-100 text-amber-800"
+                              : announcement.type === "Event"
+                              ? "bg-amber-100 text-amber-800"
+                              : "bg-amber-100 text-amber-800"
+                          }`}
+                        >
+                          {announcement.type}
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-lg">
+                        {announcement.title}
+                      </CardTitle>
+                      <CardDescription className="text-xs text-gray-500">
+                        {announcement.date}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <p className="text-sm text-gray-600">
+                        {announcement.content}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <Card className="glass border-0 shadow-lg overflow-hidden">
-                <div className="relative h-48">
-                  <img
-                    src="/images/front-entrance.jpg"
-                    alt="Front Entrance of River Run Condominium"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <h3 className="font-semibold text-lg">Elegant Entrance</h3>
-                    <p className="text-sm text-amber-100">
-                      Welcoming residents and guests
-                    </p>
+          {/* Google Fiber Webpass */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <CardHeader className="pb-2">
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <Wifi className="h-6 w-6 text-amber-700" />
                   </div>
+                  <CardTitle className="text-2xl">
+                    Google Fiber Webpass Internet Service
+                  </CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    Community-wide amenity partnership with River Run Yacht Club
+                  </CardDescription>
                 </div>
-                <CardHeader className="pb-4">
-                  <div className="flex items-center space-x-3 mb-3">
-                    <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                      <MapPin className="h-5 w-5 text-amber-700" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl">
-                        33125 Postal Code
-                      </CardTitle>
-                      <CardDescription className="text-sm">
-                        Miami, Florida
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-sm text-gray-600 mb-4">
-                    River Run Condominium is strategically positioned in
-                    Miami&apos;s 33125 postal code area, one of the city&apos;s
-                    most desirable waterfront residential districts.
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <p className="text-base text-gray-700 leading-relaxed mb-4">
+                    River Run Condominium has partnered with Google Fiber
+                    Webpass to provide premium 1 Gig internet service as a
+                    community-wide amenity for all residents. Residents enjoy:
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge
-                      variant="secondary"
-                      className="bg-amber-200 text-amber-900 text-xs"
-                    >
-                      Waterfront Living
-                    </Badge>
-                    <Badge
-                      variant="secondary"
-                      className="bg-amber-100 text-amber-800 text-xs"
-                    >
-                      Established Neighborhood
-                    </Badge>
-                    <Badge
-                      variant="secondary"
-                      className="bg-amber-200 text-amber-900 text-xs"
-                    >
-                      Prime Location
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="space-y-4"
-            >
-              <div className="glass rounded-xl p-4 border-0 shadow-lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                  Key Features
-                </h3>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-3">
-                    <Navigation className="h-4 w-4 text-amber-600" />
-                    <span className="text-sm text-gray-700">
-                      Direct North River access
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Star className="h-4 w-4 text-amber-600" />
-                    <span className="text-sm text-gray-700">
-                      Established waterfront community
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Shield className="h-4 w-4 text-amber-700" />
-                    <span className="text-sm text-gray-700">
-                      Secure residential environment
-                    </span>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="flex items-start space-x-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                      <Wifi className="h-5 w-5 text-amber-700 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-gray-800 mb-1">
+                          Fast Speeds
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Up to 1 Gig downloads AND uploads with over 99%
+                          connection reliability
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                      <Shield className="h-5 w-5 text-amber-700 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-gray-800 mb-1">
+                          Unlimited Data
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          No data caps or restrictions on your usage
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                      <Home className="h-5 w-5 text-amber-700 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-gray-800 mb-1">
+                          Free Installation
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Quick and easy setup at no additional cost
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                      <Phone className="h-5 w-5 text-amber-700 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-gray-800 mb-1">
+                          24/7 Support
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Local support from helpful humans when you need it
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="glass rounded-xl p-4 border-0 shadow-lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                  Market Position
-                </h3>
-                <p className="text-sm text-gray-600">
-                  As part of Miami&apos;s prestigious waterfront residential
-                  offerings, River Run Condominium represents one of the most
-                  sought-after addresses in the Miami real estate market.
-                </p>
-              </div>
-            </motion.div>
-          </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </section>
 
@@ -1007,87 +1061,6 @@ export default function HomePage() {
                 </div>
               </div>
             </Card>
-          </motion.div>
-
-          {/* Recent Announcements */}
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-              Recent Announcements
-            </h3>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                {
-                  title: "Google Fiber Partnership Completed",
-                  content:
-                    "We are pleased to announce the successful completion of our partnership with Google Fiber, providing ultra-fast internet service included in each residential unit. The installation was completed mid-summer, delivering speeds up to 2 Gigabits per second to all residents.",
-                  date: "July 15, 2025",
-                  icon: <TrendingUp className="h-5 w-5 text-blue-600" />,
-                  type: "Technology",
-                },
-                {
-                  title: "Racquetball Court Demolition",
-                  content:
-                    "The former racquetball court located at the waterfront end of the property has been successfully demolished and converted into a landscaped grass field. Additional improvements and future development plans will be presented for resident input at upcoming board meetings.",
-                  date: "August 23, 2025",
-                  icon: <Shield className="h-5 w-5 text-amber-600" />,
-                  type: "Property",
-                },
-                {
-                  title: "40-Year Recertification Project",
-                  content:
-                    "The building is currently undergoing its mandatory 40-year recertification process. This comprehensive project will span approximately 12 weeks and includes structural inspections, exterior painting updates, and garage facility renovations to ensure continued compliance and safety standards.",
-                  date: "October 25, 2025",
-                  icon: <FileText className="h-5 w-5 text-amber-600" />,
-                  type: "Maintenance",
-                },
-              ].map((announcement, index) => (
-                <motion.div
-                  key={announcement.title}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                          {announcement.icon}
-                        </div>
-                        <Badge
-                          variant="secondary"
-                          className={`text-xs ${
-                            announcement.type === "Maintenance"
-                              ? "bg-amber-100 text-amber-800"
-                              : announcement.type === "Event"
-                              ? "bg-amber-100 text-amber-800"
-                              : "bg-amber-100 text-amber-800"
-                          }`}
-                        >
-                          {announcement.type}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-lg">
-                        {announcement.title}
-                      </CardTitle>
-                      <CardDescription className="text-xs text-gray-500">
-                        {announcement.date}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <p className="text-sm text-gray-600">
-                        {announcement.content}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
           </motion.div>
         </div>
       </section>
