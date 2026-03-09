@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence, useInView } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
 import {
   Building2,
   MapPin,
@@ -14,13 +15,10 @@ import {
   Home,
   Shield,
   Star,
-  Newspaper,
   MessageSquare,
   Bell,
   TrendingUp,
-  UserPlus,
   FileText,
-  Megaphone,
   X,
   Navigation2,
   Coffee,
@@ -31,7 +29,6 @@ import {
   AlertTriangle,
   Printer,
   Menu,
-  Wifi,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,6 +45,31 @@ import { Separator } from "@/components/ui/separator";
 export default function HomePage() {
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hasCelebrated, setHasCelebrated] = useState(false);
+  const [sparkleParticles, setSparkleParticles] = useState<{ id: number; angle: number; delay: number; x: number; y: number }[]>([]);
+  const documentsSectionRef = useRef<HTMLElement>(null);
+  const documentsInView = useInView(documentsSectionRef, { once: true, amount: 0.2 });
+
+  useEffect(() => {
+    if (!documentsInView || hasCelebrated) return;
+    const id = requestAnimationFrame(() => {
+      setHasCelebrated(true);
+      const count = 36;
+      const particles = Array.from({ length: count }, (_, i) => ({
+        id: i,
+        angle: (i / count) * 360 + Math.random() * 20,
+        delay: Math.random() * 0.3,
+        x: (Math.random() - 0.5) * 80,
+        y: (Math.random() - 0.5) * 80,
+      }));
+      setSparkleParticles(particles);
+    });
+    const t = setTimeout(() => setSparkleParticles([]), 1800);
+    return () => {
+      cancelAnimationFrame(id);
+      clearTimeout(t);
+    };
+  }, [documentsInView, hasCelebrated]);
 
   // Building location coordinates (Miami, FL area)
   const buildingLocation = {
@@ -119,6 +141,7 @@ export default function HomePage() {
             <div className="hidden md:flex space-x-6">
               {[
                 { name: "Home", href: "#home" },
+                { name: "Documents", href: "#documents" },
                 { name: "About", href: "#about" },
                 { name: "Board", href: "#board" },
                 { name: "Prop. Mgmt", href: "#property-management" },
@@ -158,6 +181,7 @@ export default function HomePage() {
               <div className="px-4 py-4 space-y-3">
                 {[
                   { name: "Home", href: "#home" },
+                  { name: "Documents", href: "#documents" },
                   { name: "About", href: "#about" },
                   { name: "Board", href: "#board" },
                   { name: "Property Management", href: "#property-management" },
@@ -186,11 +210,16 @@ export default function HomePage() {
       >
         {/* Hero Background Image */}
         <div className="absolute inset-0">
-          <img
-            src="/images/building.jpg"
-            alt="River Run Condominium Building"
-            className="w-full h-full object-cover object-center sm:object-center md:object-center lg:object-center"
-          />
+          <div className="relative w-full h-full">
+            <Image
+              src="/images/building.jpg"
+              alt="River Run Condominium Building"
+              fill
+              className="object-cover object-center"
+              sizes="100vw"
+              priority
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-br from-amber-900/50 via-amber-800/40 to-amber-900/60"></div>
         </div>
 
@@ -486,10 +515,12 @@ export default function HomePage() {
               >
                 <Card className="glass border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden">
                   <div className="relative h-64 overflow-hidden">
-                    <img
+                    <Image
                       src={image.src}
                       alt={image.alt}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      sizes="(max-width: 768px) 100vw, 33vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -515,11 +546,15 @@ export default function HomePage() {
       {/* Parallax Waterfront Section */}
       <section className="relative py-12 sm:py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0">
-          <img
-            src="/images/bird-eye.jpg"
-            alt="Aerial View of River Run Condominium"
-            className="w-full h-full object-cover object-center sm:object-center md:object-center lg:object-center parallax"
-          />
+          <div className="relative w-full h-full">
+            <Image
+              src="/images/bird-eye.jpg"
+              alt="Aerial View of River Run Condominium"
+              fill
+              className="object-cover object-center parallax"
+              sizes="100vw"
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-r from-amber-900/80 via-amber-800/70 to-amber-900/80"></div>
         </div>
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -568,7 +603,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Recent Announcements & Google Fiber Section */}
+      {/* Recent Announcements */}
       <section className="py-16 bg-gradient-to-r from-amber-50 to-amber-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Recent Announcements */}
@@ -585,19 +620,19 @@ export default function HomePage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
                 {
-                  title: "Google Fiber Partnership Completed",
+                  title: "HOA Meeting — March 5, 2026",
                   content:
-                    "We are pleased to announce the successful completion of our partnership with Google Fiber, providing ultra-fast internet service included in each residential unit. The installation was completed mid-summer, delivering speeds up to 2 Gigabits per second to all residents.",
-                  date: "July 15, 2025",
-                  icon: <TrendingUp className="h-5 w-5 text-blue-600" />,
-                  type: "Technology",
+                    "The Board held a meeting on March 5, 2026, to discuss the additional funds necessary for the 40-year recertification and to hear residents' concerns. The HOA is actively working to address that feedback and has launched this website to keep you informed on current events, upcoming projects, and association documents. Stay connected with your neighbors: the HOA has created a dedicated River Run Condominium group on Nextdoor—join the app and the group to participate in the community conversation.",
+                  date: "March 5, 2026",
+                  icon: <Users className="h-5 w-5 text-amber-600" />,
+                  type: "Meeting",
                 },
                 {
-                  title: "Racquetball Court Demolition",
+                  title: "Future Projects — Greenspace &amp; Marina Area",
                   content:
-                    "The former racquetball court located at the waterfront end of the property has been successfully demolished and converted into a landscaped grass field. Additional improvements and future development plans will be presented for resident input at upcoming board meetings.",
-                  date: "August 23, 2025",
-                  icon: <Shield className="h-5 w-5 text-amber-600" />,
+                    "We've started tailoring the greenspace for residents' enjoyment by removing trees that were a liability to boaters and residents and impeded the view. Next up: cover and bench/seating in the greenspace next to the marina (formerly the racquetball courts), including picnic tables and benches. Last in the plan is a future BBQ addition for residents' enjoyment.",
+                  date: "In progress",
+                  icon: <Home className="h-5 w-5 text-amber-600" />,
                   type: "Property",
                 },
                 {
@@ -652,89 +687,252 @@ export default function HomePage() {
               ))}
             </div>
           </motion.div>
+        </div>
+      </section>
 
-          {/* Google Fiber Webpass */}
+      {/* Association Documents & What's Happening at River Run */}
+      <section ref={documentsSectionRef} id="documents" className="relative py-16 bg-white/30 overflow-hidden">
+        {/* Sparkle celebration when section comes into view */}
+        <AnimatePresence>
+          {sparkleParticles.length > 0 && (
+            <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+              {sparkleParticles.map((p) => (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scale: [0, 1.2, 0.5],
+                    x: Math.cos((p.angle * Math.PI) / 180) * 120 + p.x,
+                    y: Math.sin((p.angle * Math.PI) / 180) * 120 + p.y,
+                  }}
+                  transition={{
+                    duration: 1.2,
+                    delay: p.delay,
+                    ease: "easeOut",
+                  }}
+                  className="absolute h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]"
+                  style={{ willChange: "transform, opacity" }}
+                />
+              ))}
+            </div>
+          )}
+        </AnimatePresence>
+        <div className="relative z-0 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
+            className="text-center mb-12"
           >
-            <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <CardHeader className="pb-2">
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <Wifi className="h-6 w-6 text-amber-700" />
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+              Association Documents &amp; What&apos;s Happening at River Run
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Key updates on governing documents, permits, agreements, financials,
+              inspections, and current building work.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                <CardHeader className="pb-3">
+                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
+                    <Shield className="h-5 w-5 text-amber-700" />
                   </div>
-                  <CardTitle className="text-2xl">
-                    Google Fiber Webpass Internet Service
-                  </CardTitle>
-                  <CardDescription className="text-base mt-1">
-                    Community-wide amenity partnership with River Run Yacht Club
+                  <CardTitle className="text-xl">Governing Documents &amp; Rules</CardTitle>
+                  <CardDescription className="text-sm">
+                    The condo declaration, EV charging policy, rules for inspecting
+                    and copying association records, and general Rules are in
+                    effect and available to owners.
                   </CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <p className="text-base text-gray-700 leading-relaxed mb-4">
-                    River Run Condominium has partnered with Google Fiber
-                    Webpass to provide premium 1 Gig internet service as a
-                    community-wide amenity for all residents. Residents enjoy:
-                  </p>
+                </CardHeader>
+              </Card>
+            </motion.div>
 
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="flex items-start space-x-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
-                      <Wifi className="h-5 w-5 text-amber-700 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-gray-800 mb-1">
-                          Fast Speeds
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Up to 1 Gig downloads AND uploads with over 99%
-                          connection reliability
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
-                      <Shield className="h-5 w-5 text-amber-700 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-gray-800 mb-1">
-                          Unlimited Data
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          No data caps or restrictions on your usage
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
-                      <Home className="h-5 w-5 text-amber-700 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-gray-800 mb-1">
-                          Free Installation
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Quick and easy setup at no additional cost
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
-                      <Phone className="h-5 w-5 text-amber-700 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-gray-800 mb-1">
-                          24/7 Support
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Local support from helpful humans when you need it
-                        </p>
-                      </div>
-                    </div>
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                <CardHeader className="pb-3">
+                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
+                    <FileText className="h-5 w-5 text-amber-700" />
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                  <CardTitle className="text-xl">Permits</CardTitle>
+                  <CardDescription className="text-sm">
+                    Electrical and building permits, NOC, deficiency list, and
+                    Mastervolt permit are on file for current and recent
+                    building work.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                <CardHeader className="pb-3">
+                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
+                    <FileText className="h-5 w-5 text-amber-700" />
+                  </div>
+                  <CardTitle className="text-xl">RRCA Agreements</CardTitle>
+                  <CardDescription className="text-sm">
+                    Management (ALG/Caribbean), generator, and Webpass agreements
+                    are executed and govern association operations and
+                    services.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.15 }}
+              viewport={{ once: true }}
+            >
+              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                <CardHeader className="pb-3">
+                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
+                    <Shield className="h-5 w-5 text-amber-700" />
+                  </div>
+                  <CardTitle className="text-xl">Insurance</CardTitle>
+                  <CardDescription className="text-sm">
+                    Contractor and RRCA insurance are current. Appraisal, wind
+                    mitigation, and flood certificate documentation is
+                    maintained for the association.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.25 }}
+              viewport={{ once: true }}
+            >
+              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                <CardHeader className="pb-3">
+                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
+                    <TrendingUp className="h-5 w-5 text-amber-700" />
+                  </div>
+                  <CardTitle className="text-xl">Financials</CardTitle>
+                  <CardDescription className="text-sm">
+                    Association financial reports for 2024 and 2025 are
+                    available and reflect current budgeting and reserves.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.35 }}
+              viewport={{ once: true }}
+            >
+              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                <CardHeader className="pb-3">
+                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
+                    <Shield className="h-5 w-5 text-amber-700" />
+                  </div>
+                  <CardTitle className="text-xl">Fire &amp; Generator Inspections</CardTitle>
+                  <CardDescription className="text-sm">
+                    RPTS and REINS fire and generator maintenance inspections
+                    are completed on schedule; recent reports are on file
+                    through 2024.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </motion.div>
+
+            {/* Bottom two cards centered */}
+            <div className="flex flex-wrap justify-center gap-6 md:col-span-2 lg:col-span-3">
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="w-full md:max-w-[calc(50%-12px)] lg:max-w-[calc(33.333%-16px)]"
+              >
+                <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                  <CardHeader className="pb-3">
+                    <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
+                      <Building2 className="h-5 w-5 text-amber-700" />
+                    </div>
+                    <CardTitle className="text-xl">Financed Work 2025–2026</CardTitle>
+                    <CardDescription className="text-sm">
+                      Concrete restoration and related work are underway. Payment
+                      applications, change orders, estimates, and inspection
+                      letters are documented and progressing.
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="w-full md:max-w-[calc(50%-12px)] lg:max-w-[calc(33.333%-16px)]"
+              >
+                <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                  <CardHeader className="pb-3">
+                    <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
+                      <Building2 className="h-5 w-5 text-amber-700" />
+                    </div>
+                    <CardTitle className="text-xl">40-Year Recertification</CardTitle>
+                    <CardDescription className="text-sm">
+                      Engineering reports, SIRS report, thermal imaging, JVP
+                      certification, demolition plan, and related permits support
+                      the 40-year recertification process.
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </motion.div>
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="text-center mt-12"
+          >
+            <p className="text-gray-600 mb-4">
+              For full documents, reports, and supporting materials, visit our
+              shared document folder.
+            </p>
+            <Button
+              asChild
+              size="lg"
+              className="bg-amber-700 hover:bg-amber-800 text-white px-6 py-2.5 rounded-full text-sm font-medium"
+            >
+              <a
+                href="https://drive.google.com/drive/u/3/folders/1dQ3JJ8ssh253NdsDTP8Pv8htK1kCdSr4"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FileText className="mr-2 h-4 w-4 inline" />
+                View Documents on Google Drive
+              </a>
+            </Button>
           </motion.div>
         </div>
       </section>
@@ -1445,10 +1643,12 @@ export default function HomePage() {
               className="glass rounded-xl p-6 overflow-hidden"
             >
               <div className="relative h-48 mb-6 rounded-lg overflow-hidden">
-                <img
+                <Image
                   src="/images/side-view.jpg"
                   alt="Side View of River Run Condominium"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-amber-900/60 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 right-4 text-white">
@@ -1549,11 +1749,15 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="relative bg-gray-900 text-white py-12 overflow-hidden">
         <div className="absolute inset-0">
-          <img
-            src="/images/back-view.jpg"
-            alt="Back View of River Run Condominium"
-            className="w-full h-full object-cover opacity-20"
-          />
+          <div className="relative w-full h-full">
+            <Image
+              src="/images/back-view.jpg"
+              alt="Back View of River Run Condominium"
+              fill
+              className="object-cover opacity-20"
+              sizes="100vw"
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-gray-900/60"></div>
         </div>
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
