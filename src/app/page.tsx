@@ -141,8 +141,8 @@ export default function HomePage() {
             <div className="hidden md:flex space-x-6">
               {[
                 { name: "Home", href: "#home" },
-                { name: "Documents", href: "#documents" },
                 { name: "About", href: "#about" },
+                { name: "Resources", href: "#documents" },
                 { name: "Board", href: "#board" },
                 { name: "Prop. Mgmt", href: "#property-management" },
                 { name: "News", href: "#news" },
@@ -181,8 +181,8 @@ export default function HomePage() {
               <div className="px-4 py-4 space-y-3">
                 {[
                   { name: "Home", href: "#home" },
-                  { name: "Documents", href: "#documents" },
                   { name: "About", href: "#about" },
+                  { name: "Resources", href: "#documents" },
                   { name: "Board", href: "#board" },
                   { name: "Property Management", href: "#property-management" },
                   { name: "News", href: "#news" },
@@ -628,7 +628,7 @@ export default function HomePage() {
                   type: "Meeting",
                 },
                 {
-                  title: "Future Projects — Greenspace &amp; Marina Area",
+                  title: "Future Projects — Greenspace and Marina Area",
                   content:
                     "We've started tailoring the greenspace for residents' enjoyment by removing trees that were a liability to boaters and residents and impeded the view. Next up: cover and bench/seating in the greenspace next to the marina (formerly the racquetball courts), including picnic tables and benches. Last in the plan is a future BBQ addition for residents' enjoyment.",
                   date: "In progress",
@@ -690,7 +690,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Association Documents & What's Happening at River Run */}
+      {/* Association Resources */}
       <section ref={documentsSectionRef} id="documents" className="relative py-16 bg-white/30 overflow-hidden">
         {/* Sparkle celebration when section comes into view */}
         <AnimatePresence>
@@ -727,213 +727,96 @@ export default function HomePage() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-              Association Documents &amp; What&apos;s Happening at River Run
+              Association Resources
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Key updates on governing documents, permits, agreements, financials,
-              inspections, and current building work.
+              Key documents organized by category. Click a card to open the folder.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                <CardHeader className="pb-3">
-                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
-                    <Shield className="h-5 w-5 text-amber-700" />
-                  </div>
-                  <CardTitle className="text-xl">Governing Documents &amp; Rules</CardTitle>
-                  <CardDescription className="text-sm">
-                    The condo declaration, EV charging policy, rules for inspecting
-                    and copying association records, and general Rules are in
-                    effect and available to owners.
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                <CardHeader className="pb-3">
-                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
-                    <FileText className="h-5 w-5 text-amber-700" />
-                  </div>
-                  <CardTitle className="text-xl">Permits</CardTitle>
-                  <CardDescription className="text-sm">
-                    Electrical and building permits, NOC, deficiency list, and
-                    Mastervolt permit are on file for current and recent
-                    building work.
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                <CardHeader className="pb-3">
-                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
-                    <FileText className="h-5 w-5 text-amber-700" />
-                  </div>
-                  <CardTitle className="text-xl">RRCA Agreements</CardTitle>
-                  <CardDescription className="text-sm">
-                    Management (ALG/Caribbean), generator, and Webpass agreements
-                    are executed and govern association operations and
-                    services.
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.15 }}
-              viewport={{ once: true }}
-            >
-              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                <CardHeader className="pb-3">
-                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
-                    <Shield className="h-5 w-5 text-amber-700" />
-                  </div>
-                  <CardTitle className="text-xl">Insurance</CardTitle>
-                  <CardDescription className="text-sm">
-                    Contractor and RRCA insurance are current. Appraisal, wind
-                    mitigation, and flood certificate documentation is
-                    maintained for the association.
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.25 }}
-              viewport={{ once: true }}
-            >
-              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                <CardHeader className="pb-3">
-                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
-                    <TrendingUp className="h-5 w-5 text-amber-700" />
-                  </div>
-                  <CardTitle className="text-xl">Financials</CardTitle>
-                  <CardDescription className="text-sm">
-                    Association financial reports for 2024 and 2025 are
-                    available and reflect current budgeting and reserves.
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.35 }}
-              viewport={{ once: true }}
-            >
-              <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                <CardHeader className="pb-3">
-                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
-                    <Shield className="h-5 w-5 text-amber-700" />
-                  </div>
-                  <CardTitle className="text-xl">Fire &amp; Generator Inspections</CardTitle>
-                  <CardDescription className="text-sm">
-                    RPTS and REINS fire and generator maintenance inspections
-                    are completed on schedule; recent reports are on file
-                    through 2024.
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </motion.div>
-
-            {/* Bottom two cards centered */}
-            <div className="flex flex-wrap justify-center gap-6 md:col-span-2 lg:col-span-3">
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="w-full md:max-w-[calc(50%-12px)] lg:max-w-[calc(33.333%-16px)]"
-              >
-                <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                  <CardHeader className="pb-3">
-                    <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
-                      <Building2 className="h-5 w-5 text-amber-700" />
+          {(() => {
+            const docs = [
+              {
+                title: "Wind Mitigation + Elevation Certificate + Appraisal",
+                description: "Wind mitigation report, elevation certificate, and property appraisal documentation.",
+                href: "https://drive.google.com/drive/folders/1W9_ON8-bI3b-9kbNUo_hHjcrDHyCfAhU?usp=drive_link",
+                icon: Shield,
+              },
+              {
+                title: "Insurance",
+                description: "Contractor and RRCA insurance documentation.",
+                href: "https://drive.google.com/drive/folders/11hzoujLb4_7uiLEFXaKAtbXBE6p3A4rb?usp=drive_link",
+                icon: Shield,
+              },
+              {
+                title: "40 Year Recertification Docs",
+                description: "Engineering reports, SIRS, permits, and recertification documentation.",
+                href: "https://drive.google.com/drive/folders/1KerWSWmxkmBOWe4TRvowKY5XmxD7MFux?usp=drive_link",
+                icon: Building2,
+              },
+              {
+                title: "Rules",
+                description: "Governing documents, declaration, EV charging policy, and association rules.",
+                href: "https://drive.google.com/drive/folders/1EmHTGAipH8lAFi6eCXxeuW1OuCNaL7y9?usp=sharing",
+                icon: FileText,
+              },
+              {
+                title: "Financials",
+                description: "Association financial reports and budgets.",
+                href: "https://drive.google.com/drive/folders/1Jx6VI6MurVf1PusP-gRLhrc-UqRY6814?usp=sharing",
+                icon: TrendingUp,
+              },
+            ];
+            const DocCard = ({ doc, index }: { doc: (typeof docs)[0]; index: number }) => {
+              const DocIcon = doc.icon;
+              return (
+                <motion.a
+                  href={doc.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="block h-full min-h-0 w-full min-w-0"
+                >
+                  <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full group cursor-pointer flex flex-col">
+                    <CardHeader className="pb-3 flex-1 flex flex-col">
+                      <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-amber-200 transition-colors shrink-0">
+                        <DocIcon className="h-5 w-5 text-amber-700" />
+                      </div>
+                      <CardTitle className="text-xl text-gray-800 group-hover:text-amber-700 transition-colors">
+                        {doc.title}
+                      </CardTitle>
+                      <CardDescription className="text-sm flex-1">
+                        {doc.description}
+                      </CardDescription>
+                      <span className="text-amber-600 text-sm font-medium mt-2 inline-flex items-center gap-1 shrink-0">
+                        Open folder
+                        <FileText className="h-4 w-4" />
+                      </span>
+                    </CardHeader>
+                  </Card>
+                </motion.a>
+              );
+            };
+            return (
+              <>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 [grid-auto-rows:1fr]">
+                  {docs.slice(0, 3).map((doc, i) => (
+                    <DocCard key={doc.title} doc={doc} index={i} />
+                  ))}
+                </div>
+                <div className="flex flex-wrap justify-center gap-6 mt-6 [grid-auto-rows:1fr]">
+                  {docs.slice(3, 5).map((doc, i) => (
+                    <div key={doc.title} className="w-full md:w-[calc(50%-12px)] lg:w-[calc((100%-3rem)/3)] max-w-md">
+                      <DocCard doc={doc} index={i + 3} />
                     </div>
-                    <CardTitle className="text-xl">Financed Work 2025–2026</CardTitle>
-                    <CardDescription className="text-sm">
-                      Concrete restoration and related work are underway. Payment
-                      applications, change orders, estimates, and inspection
-                      letters are documented and progressing.
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                viewport={{ once: true }}
-                className="w-full md:max-w-[calc(50%-12px)] lg:max-w-[calc(33.333%-16px)]"
-              >
-                <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                  <CardHeader className="pb-3">
-                    <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
-                      <Building2 className="h-5 w-5 text-amber-700" />
-                    </div>
-                    <CardTitle className="text-xl">40-Year Recertification</CardTitle>
-                    <CardDescription className="text-sm">
-                      Engineering reports, SIRS report, thermal imaging, JVP
-                      certification, demolition plan, and related permits support
-                      the 40-year recertification process.
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </motion.div>
-            </div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            viewport={{ once: true }}
-            className="text-center mt-12"
-          >
-            <p className="text-gray-600 mb-4">
-              For full documents, reports, and supporting materials, visit our
-              shared document folder.
-            </p>
-            <Button
-              asChild
-              size="lg"
-              className="bg-amber-700 hover:bg-amber-800 text-white px-6 py-2.5 rounded-full text-sm font-medium"
-            >
-              <a
-                href="https://drive.google.com/drive/u/3/folders/1dQ3JJ8ssh253NdsDTP8Pv8htK1kCdSr4"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FileText className="mr-2 h-4 w-4 inline" />
-                View Documents on Google Drive
-              </a>
-            </Button>
-          </motion.div>
+                  ))}
+                </div>
+              </>
+            );
+          })()}
         </div>
       </section>
 
