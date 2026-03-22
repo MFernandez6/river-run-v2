@@ -766,6 +766,12 @@ export default function HomePage() {
                 href: "https://drive.google.com/drive/folders/1Jx6VI6MurVf1PusP-gRLhrc-UqRY6814?usp=sharing",
                 icon: TrendingUp,
               },
+              {
+                title: "Contractor Photos & Videos",
+                description: "Pictures and videos of work completed by the contractor for the 40-year recertification and related projects.",
+                href: "https://www.dropbox.com/scl/fo/70pifcqy682n50silkh9p/AEtro_yWkm_mLOViT_LLAtk?rlkey=0o7fs1aot0nvdqmw44kkb6m15&st=wtr6ebcv&dl=0",
+                icon: Building2,
+              },
             ];
             const DocCard = ({ doc, index }: { doc: (typeof docs)[0]; index: number }) => {
               const DocIcon = doc.icon;
@@ -801,20 +807,11 @@ export default function HomePage() {
               );
             };
             return (
-              <>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 [grid-auto-rows:1fr]">
-                  {docs.slice(0, 3).map((doc, i) => (
-                    <DocCard key={doc.title} doc={doc} index={i} />
-                  ))}
-                </div>
-                <div className="flex flex-wrap justify-center gap-6 mt-6 [grid-auto-rows:1fr]">
-                  {docs.slice(3, 5).map((doc, i) => (
-                    <div key={doc.title} className="w-full md:w-[calc(50%-12px)] lg:w-[calc((100%-3rem)/3)] max-w-md">
-                      <DocCard doc={doc} index={i + 3} />
-                    </div>
-                  ))}
-                </div>
-              </>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 [grid-auto-rows:1fr]">
+                {docs.map((doc, i) => (
+                  <DocCard key={doc.title} doc={doc} index={i} />
+                ))}
+              </div>
             );
           })()}
         </div>
