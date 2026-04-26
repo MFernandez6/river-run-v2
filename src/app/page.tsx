@@ -894,7 +894,7 @@ export default function HomePage() {
                   <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
                     <CardHeader className="text-center pb-3">
                       <Avatar className="w-16 h-16 mx-auto mb-3">
-                        <AvatarImage src={`/api/placeholder/64/64`} />
+                        <AvatarImage src="" />
                         <AvatarFallback className="bg-amber-100 text-amber-800 text-lg font-semibold">
                           {member.initials}
                         </AvatarFallback>
