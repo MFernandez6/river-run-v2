@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Announcement, BoardMember } from "@/lib/admin-data";
@@ -30,6 +30,18 @@ export default function AdminDashboardPage() {
 
   const [board, setBoard] = useState<BoardMember[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const boardTouchedRef = useRef(false);
+  const announcementsTouchedRef = useRef(false);
+
+  function patchBoard(updater: SetStateAction<BoardMember[]>) {
+    boardTouchedRef.current = true;
+    setBoard(updater);
+  }
+
+  function patchAnnouncements(updater: SetStateAction<Announcement[]>) {
+    announcementsTouchedRef.current = true;
+    setAnnouncements(updater);
+  }
 
   const hasData = useMemo(
     () => board.length > 0 || announcements.length > 0,
@@ -56,7 +68,20 @@ export default function AdminDashboardPage() {
   async function saveAll() {
     setSaving(true);
     try {
-      const normalizedAnnouncements = announcements
+      let annSource = announcements;
+      if (!announcementsTouchedRef.current) {
+        const r = await fetch("/api/admin/announcements");
+        const j = await r.json();
+        annSource = Array.isArray(j?.items) ? j.items : [];
+      }
+      let boardSource = board;
+      if (!boardTouchedRef.current) {
+        const r = await fetch("/api/admin/board");
+        const j = await r.json();
+        boardSource = Array.isArray(j?.items) ? j.items : [];
+      }
+
+      const normalizedAnnouncements = annSource
         .map((a) => ({
           ...a,
           updatedAt: a.updatedAt ?? new Date().toISOString(),
@@ -68,7 +93,7 @@ export default function AdminDashboardPage() {
         fetch("/api/admin/board", {
           method: "PUT",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ items: board }),
+          body: JSON.stringify({ items: boardSource }),
         }),
         fetch("/api/admin/announcements", {
           method: "PUT",
@@ -79,6 +104,9 @@ export default function AdminDashboardPage() {
       const bad = res.find((r) => !r.ok);
       if (bad) throw new Error("Save failed");
       setAnnouncements(normalizedAnnouncements);
+      setBoard(boardSource);
+      announcementsTouchedRef.current = false;
+      boardTouchedRef.current = false;
     } finally {
       setSaving(false);
     }
@@ -171,7 +199,7 @@ export default function AdminDashboardPage() {
                       variant="outline"
                       className="rounded-xl"
                       onClick={() =>
-                        setBoard((prev) => [
+                        patchBoard((prev) => [
                           ...prev,
                           {
                             id: uid(),
@@ -197,7 +225,7 @@ export default function AdminDashboardPage() {
                             value={m.name}
                             onChange={(e) => {
                               const v = e.target.value;
-                              setBoard((prev) =>
+                              patchBoard((prev) =>
                                 prev.map((x, i) =>
                                   i === idx ? { ...x, name: v } : x
                                 )
@@ -210,7 +238,7 @@ export default function AdminDashboardPage() {
                             value={m.position}
                             onChange={(e) => {
                               const v = e.target.value;
-                              setBoard((prev) =>
+                              patchBoard((prev) =>
                                 prev.map((x, i) =>
                                   i === idx ? { ...x, position: v } : x
                                 )
@@ -223,7 +251,7 @@ export default function AdminDashboardPage() {
                             value={m.email}
                             onChange={(e) => {
                               const v = e.target.value;
-                              setBoard((prev) =>
+                              patchBoard((prev) =>
                                 prev.map((x, i) =>
                                   i === idx ? { ...x, email: v } : x
                                 )
@@ -236,7 +264,7 @@ export default function AdminDashboardPage() {
                             value={m.phone ?? ""}
                             onChange={(e) => {
                               const v = e.target.value;
-                              setBoard((prev) =>
+                              patchBoard((prev) =>
                                 prev.map((x, i) =>
                                   i === idx ? { ...x, phone: v } : x
                                 )
@@ -251,7 +279,7 @@ export default function AdminDashboardPage() {
                             variant="outline"
                             className="rounded-xl"
                             onClick={() =>
-                              setBoard((prev) => prev.filter((_, i) => i !== idx))
+                              patchBoard((prev) => prev.filter((_, i) => i !== idx))
                             }
                           >
                             Remove
@@ -273,7 +301,7 @@ export default function AdminDashboardPage() {
                       variant="outline"
                       className="rounded-xl"
                       onClick={() =>
-                        setAnnouncements((prev) => [
+                        patchAnnouncements((prev) => [
                           ...prev,
                           {
                             id: uid(),
@@ -299,7 +327,7 @@ export default function AdminDashboardPage() {
                             value={a.title}
                             onChange={(e) => {
                               const v = e.target.value;
-                              setAnnouncements((prev) =>
+                              patchAnnouncements((prev) =>
                                 prev.map((x, i) =>
                                   i === idx ? { ...x, title: v } : x
                                 )
@@ -312,7 +340,7 @@ export default function AdminDashboardPage() {
                             value={a.date}
                             onChange={(e) => {
                               const v = e.target.value;
-                              setAnnouncements((prev) =>
+                              patchAnnouncements((prev) =>
                                 prev.map((x, i) =>
                                   i === idx ? { ...x, date: v } : x
                                 )
@@ -325,7 +353,7 @@ export default function AdminDashboardPage() {
                             value={a.type}
                             onChange={(e) => {
                               const v = e.target.value;
-                              setAnnouncements((prev) =>
+                              patchAnnouncements((prev) =>
                                 prev.map((x, i) =>
                                   i === idx ? { ...x, type: v } : x
                                 )
@@ -338,7 +366,7 @@ export default function AdminDashboardPage() {
                             value={a.content}
                             onChange={(e) => {
                               const v = e.target.value;
-                              setAnnouncements((prev) =>
+                              patchAnnouncements((prev) =>
                                 prev.map((x, i) =>
                                   i === idx ? { ...x, content: v } : x
                                 )
@@ -354,7 +382,7 @@ export default function AdminDashboardPage() {
                             variant="outline"
                             className="rounded-xl"
                             onClick={() =>
-                              setAnnouncements((prev) =>
+                              patchAnnouncements((prev) =>
                                 prev.filter((_, i) => i !== idx)
                               )
                             }
