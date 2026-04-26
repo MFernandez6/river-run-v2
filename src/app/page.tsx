@@ -147,6 +147,7 @@ export default function HomePage() {
                 { name: "Prop. Mgmt", href: "#property-management" },
                 { name: "News", href: "#news" },
                 { name: "Contact", href: "#contact" },
+                { name: "Admin Portal", href: "/admin/login" },
               ].map((item) => (
                 <motion.a
                   key={item.name}
@@ -187,6 +188,7 @@ export default function HomePage() {
                   { name: "Property Management", href: "#property-management" },
                   { name: "News", href: "#news" },
                   { name: "Contact", href: "#contact" },
+                  { name: "Admin Portal", href: "/admin/login" },
                 ].map((item) => (
                   <a
                     key={item.name}
