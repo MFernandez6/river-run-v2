@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { motion, AnimatePresence, useInView } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import Link from "next/link";
 import {
   Building2,
   MapPin,
@@ -56,10 +57,16 @@ function initialsFromName(name: string): string {
 export default function HomePage() {
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [hasCelebrated, setHasCelebrated] = useState(false);
-  const [sparkleParticles, setSparkleParticles] = useState<{ id: number; angle: number; delay: number; x: number; y: number }[]>([]);
-  const documentsSectionRef = useRef<HTMLElement>(null);
-  const documentsInView = useInView(documentsSectionRef, { once: true, amount: 0.2 });
+  const [hasSparkledLatestAnnouncement, setHasSparkledLatestAnnouncement] =
+    useState(false);
+  const [sparkleParticles, setSparkleParticles] = useState<
+    { id: number; angle: number; delay: number; x: number; y: number }[]
+  >([]);
+  const latestAnnouncementRef = useRef<HTMLDivElement | null>(null);
+  const latestAnnouncementInView = useInView(latestAnnouncementRef, {
+    once: true,
+    amount: 0.45,
+  });
   const [publicAnnouncements, setPublicAnnouncements] = useState<
     { id: string; title: string; content: string; date: string; type: string; updatedAt?: string }[]
   >([]);
@@ -113,9 +120,9 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    if (!documentsInView || hasCelebrated) return;
+    if (!latestAnnouncementInView || hasSparkledLatestAnnouncement) return;
     const id = requestAnimationFrame(() => {
-      setHasCelebrated(true);
+      setHasSparkledLatestAnnouncement(true);
       const count = 36;
       const particles = Array.from({ length: count }, (_, i) => ({
         id: i,
@@ -131,7 +138,21 @@ export default function HomePage() {
       cancelAnimationFrame(id);
       clearTimeout(t);
     };
-  }, [documentsInView, hasCelebrated]);
+  }, [latestAnnouncementInView, hasSparkledLatestAnnouncement]);
+
+  const displayAnnouncements = useMemo(() => {
+    const fallback = [
+      {
+        id: "fallback-1",
+        title: "HOA Meeting — March 5, 2026",
+        content:
+          "The Board held a meeting on March 5, 2026, to discuss the additional funds necessary for the 40-year recertification and to hear residents' concerns. The HOA is actively working to address that feedback and has launched this website to keep you informed on current events, upcoming projects, and association documents. Stay connected with your neighbors: the HOA has created a dedicated River Run Condominium group on Nextdoor—join the app and the group to participate in the community conversation.",
+        date: "March 5, 2026",
+        type: "Meeting",
+      },
+    ];
+    return publicAnnouncements.length ? publicAnnouncements : fallback;
+  }, [publicAnnouncements]);
 
   // Building location coordinates (Miami, FL area)
   const buildingLocation = {
@@ -209,7 +230,6 @@ export default function HomePage() {
                 { name: "Prop. Mgmt", href: "#property-management" },
                 { name: "News", href: "#news" },
                 { name: "Contact", href: "#contact" },
-                { name: "Admin Portal", href: "/admin/login" },
               ].map((item) => (
                 <motion.a
                   key={item.name}
@@ -220,6 +240,13 @@ export default function HomePage() {
                   {item.name}
                 </motion.a>
               ))}
+              <Link
+                href="/admin"
+                prefetch
+                className="text-sm font-medium text-gray-700 hover:text-amber-700 transition-colors"
+              >
+                Admin Portal
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -250,7 +277,6 @@ export default function HomePage() {
                   { name: "Property Management", href: "#property-management" },
                   { name: "News", href: "#news" },
                   { name: "Contact", href: "#contact" },
-                  { name: "Admin Portal", href: "/admin/login" },
                 ].map((item) => (
                   <a
                     key={item.name}
@@ -261,6 +287,14 @@ export default function HomePage() {
                     {item.name}
                   </a>
                 ))}
+                <Link
+                  href="/admin"
+                  prefetch
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block py-2 text-sm font-medium text-gray-700 hover:text-amber-700 transition-colors"
+                >
+                  Admin Portal
+                </Link>
               </div>
             </motion.div>
           )}
@@ -426,24 +460,49 @@ export default function HomePage() {
               Recent Announcements
             </h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {(publicAnnouncements.length ? publicAnnouncements : [
-                {
-                  id: "fallback-1",
-                  title: "HOA Meeting — March 5, 2026",
-                  content:
-                    "The Board held a meeting on March 5, 2026, to discuss the additional funds necessary for the 40-year recertification and to hear residents' concerns. The HOA is actively working to address that feedback and has launched this website to keep you informed on current events, upcoming projects, and association documents. Stay connected with your neighbors: the HOA has created a dedicated River Run Condominium group on Nextdoor—join the app and the group to participate in the community conversation.",
-                  date: "March 5, 2026",
-                  type: "Meeting",
-                },
-              ]).map((announcement, index) => (
+              {displayAnnouncements.map((announcement, index) => (
                 <motion.div
                   key={announcement.id ?? announcement.title}
+                  ref={index === 0 ? latestAnnouncementRef : undefined}
+                  className={
+                    index === 0 ? "relative overflow-hidden rounded-xl" : undefined
+                  }
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: index * 0.1 }}
                   viewport={{ once: true }}
                 >
-                  <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                  {index === 0 ? (
+                    <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center overflow-hidden rounded-xl">
+                      <AnimatePresence>
+                        {sparkleParticles.length > 0 &&
+                          sparkleParticles.map((p) => (
+                            <motion.div
+                              key={p.id}
+                              initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                              animate={{
+                                opacity: [0, 1, 0],
+                                scale: [0, 1.2, 0.5],
+                                x:
+                                  Math.cos((p.angle * Math.PI) / 180) * 120 +
+                                  p.x,
+                                y:
+                                  Math.sin((p.angle * Math.PI) / 180) * 120 +
+                                  p.y,
+                              }}
+                              transition={{
+                                duration: 1.2,
+                                delay: p.delay,
+                                ease: "easeOut",
+                              }}
+                              className="absolute h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]"
+                              style={{ willChange: "transform, opacity" }}
+                            />
+                          ))}
+                      </AnimatePresence>
+                    </div>
+                  ) : null}
+                  <Card className="glass relative z-0 border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full overflow-hidden rounded-xl">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between mb-3">
                         <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
@@ -822,34 +881,8 @@ export default function HomePage() {
       </section>
 
       {/* Association Resources */}
-      <section ref={documentsSectionRef} id="documents" className="relative py-16 bg-white/30 overflow-hidden">
-        {/* Sparkle celebration when section comes into view */}
-        <AnimatePresence>
-          {sparkleParticles.length > 0 && (
-            <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-              {sparkleParticles.map((p) => (
-                <motion.div
-                  key={p.id}
-                  initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-                  animate={{
-                    opacity: [0, 1, 0],
-                    scale: [0, 1.2, 0.5],
-                    x: Math.cos((p.angle * Math.PI) / 180) * 120 + p.x,
-                    y: Math.sin((p.angle * Math.PI) / 180) * 120 + p.y,
-                  }}
-                  transition={{
-                    duration: 1.2,
-                    delay: p.delay,
-                    ease: "easeOut",
-                  }}
-                  className="absolute h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]"
-                  style={{ willChange: "transform, opacity" }}
-                />
-              ))}
-            </div>
-          )}
-        </AnimatePresence>
-        <div className="relative z-0 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="documents" className="py-16 bg-white/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
