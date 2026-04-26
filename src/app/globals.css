@@ -74,10 +74,9 @@
   background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #f97316 100%);
 }
 
-/* Smooth scrolling; offset for fixed glass nav on in-page anchors */
+/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
 }
 
 /* Custom animations */

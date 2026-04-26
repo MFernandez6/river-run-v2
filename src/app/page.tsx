@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import { motion, AnimatePresence, useInView } from "framer-motion";
-import { useState, useRef, useEffect, useMemo } from "react";
-import Link from "next/link";
+import { useState, useRef, useEffect } from "react";
 import {
   Building2,
   MapPin,
   Users,
+  Calendar,
   Phone,
   Mail,
   Navigation,
@@ -39,90 +39,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-
-function initialsFromName(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "?";
-  if (parts.length === 1) {
-    const w = parts[0];
-    return w.slice(0, 2).toUpperCase();
-  }
-  return (
-    (parts[0][0] ?? "") + (parts[parts.length - 1][0] ?? "")
-  ).toUpperCase();
-}
 
 export default function HomePage() {
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [hasSparkledLatestAnnouncement, setHasSparkledLatestAnnouncement] =
-    useState(false);
-  const [sparkleParticles, setSparkleParticles] = useState<
-    { id: number; angle: number; delay: number; x: number; y: number }[]
-  >([]);
-  const latestAnnouncementRef = useRef<HTMLDivElement | null>(null);
-  const latestAnnouncementInView = useInView(latestAnnouncementRef, {
-    once: true,
-    amount: 0.45,
-  });
-  const [publicAnnouncements, setPublicAnnouncements] = useState<
-    { id: string; title: string; content: string; date: string; type: string; updatedAt?: string }[]
-  >([]);
-  const [publicBoard, setPublicBoard] = useState<
-    { id: string; name: string; position: string; email: string; phone?: string; initials?: string }[]
-  >([]);
+  const [hasCelebrated, setHasCelebrated] = useState(false);
+  const [sparkleParticles, setSparkleParticles] = useState<{ id: number; angle: number; delay: number; x: number; y: number }[]>([]);
+  const documentsSectionRef = useRef<HTMLElement>(null);
+  const documentsInView = useInView(documentsSectionRef, { once: true, amount: 0.2 });
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function loadPublic() {
-      const opts = { cache: "no-store" as RequestCache };
-      const [a, b] = await Promise.all([
-        fetch("/api/public/announcements", opts)
-          .then((r) => r.json())
-          .catch(() => null),
-        fetch("/api/public/board", opts)
-          .then((r) => r.json())
-          .catch(() => null),
-      ]);
-      if (cancelled) return;
-      const announcements = Array.isArray(a?.items) ? a.items : [];
-      const board = Array.isArray(b?.items) ? b.items : [];
-      const sortKey = (x: { updatedAt?: string; date?: string }) =>
-        String(x.updatedAt ?? x.date ?? "");
-      setPublicAnnouncements(
-        announcements
-          .slice()
-          .sort(
-            (
-              x: { updatedAt?: string; date?: string },
-              y: { updatedAt?: string; date?: string }
-            ) => sortKey(y).localeCompare(sortKey(x))
-          )
-          .slice(0, 6)
-      );
-      setPublicBoard(board);
-    }
-
-    loadPublic();
-
-    function onVisible() {
-      if (document.visibilityState === "visible") loadPublic();
-    }
-    document.addEventListener("visibilitychange", onVisible);
-
-    return () => {
-      cancelled = true;
-      document.removeEventListener("visibilitychange", onVisible);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!latestAnnouncementInView || hasSparkledLatestAnnouncement) return;
+    if (!documentsInView || hasCelebrated) return;
     const id = requestAnimationFrame(() => {
-      setHasSparkledLatestAnnouncement(true);
+      setHasCelebrated(true);
       const count = 36;
       const particles = Array.from({ length: count }, (_, i) => ({
         id: i,
@@ -138,21 +69,7 @@ export default function HomePage() {
       cancelAnimationFrame(id);
       clearTimeout(t);
     };
-  }, [latestAnnouncementInView, hasSparkledLatestAnnouncement]);
-
-  const displayAnnouncements = useMemo(() => {
-    const fallback = [
-      {
-        id: "fallback-1",
-        title: "HOA Meeting — March 5, 2026",
-        content:
-          "The Board held a meeting on March 5, 2026, to discuss the additional funds necessary for the 40-year recertification and to hear residents' concerns. The HOA is actively working to address that feedback and has launched this website to keep you informed on current events, upcoming projects, and association documents. Stay connected with your neighbors: the HOA has created a dedicated River Run Condominium group on Nextdoor—join the app and the group to participate in the community conversation.",
-        date: "March 5, 2026",
-        type: "Meeting",
-      },
-    ];
-    return publicAnnouncements.length ? publicAnnouncements : fallback;
-  }, [publicAnnouncements]);
+  }, [documentsInView, hasCelebrated]);
 
   // Building location coordinates (Miami, FL area)
   const buildingLocation = {
@@ -240,13 +157,6 @@ export default function HomePage() {
                   {item.name}
                 </motion.a>
               ))}
-              <Link
-                href="/admin"
-                prefetch
-                className="text-sm font-medium text-gray-700 hover:text-amber-700 transition-colors"
-              >
-                Admin Portal
-              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -287,14 +197,6 @@ export default function HomePage() {
                     {item.name}
                   </a>
                 ))}
-                <Link
-                  href="/admin"
-                  prefetch
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block py-2 text-sm font-medium text-gray-700 hover:text-amber-700 transition-colors"
-                >
-                  Admin Portal
-                </Link>
               </div>
             </motion.div>
           )}
@@ -441,185 +343,6 @@ export default function HomePage() {
             />
           </motion.div>
         </motion.div>
-      </section>
-
-      {/* Recent Announcements */}
-      <section
-        id="announcements"
-        className="py-16 bg-gradient-to-r from-amber-50 to-amber-100"
-      >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="mb-12"
-          >
-            <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-              Recent Announcements
-            </h3>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayAnnouncements.map((announcement, index) => (
-                <motion.div
-                  key={announcement.id ?? announcement.title}
-                  ref={index === 0 ? latestAnnouncementRef : undefined}
-                  className={
-                    index === 0 ? "relative overflow-hidden rounded-xl" : undefined
-                  }
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  {index === 0 ? (
-                    <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center overflow-hidden rounded-xl">
-                      <AnimatePresence>
-                        {sparkleParticles.length > 0 &&
-                          sparkleParticles.map((p) => (
-                            <motion.div
-                              key={p.id}
-                              initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-                              animate={{
-                                opacity: [0, 1, 0],
-                                scale: [0, 1.2, 0.5],
-                                x:
-                                  Math.cos((p.angle * Math.PI) / 180) * 120 +
-                                  p.x,
-                                y:
-                                  Math.sin((p.angle * Math.PI) / 180) * 120 +
-                                  p.y,
-                              }}
-                              transition={{
-                                duration: 1.2,
-                                delay: p.delay,
-                                ease: "easeOut",
-                              }}
-                              className="absolute h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]"
-                              style={{ willChange: "transform, opacity" }}
-                            />
-                          ))}
-                      </AnimatePresence>
-                    </div>
-                  ) : null}
-                  <Card className="glass relative z-0 border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full overflow-hidden rounded-xl">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                          {(announcement.type === "Meeting" && (
-                            <Users className="h-5 w-5 text-amber-600" />
-                          )) ||
-                            (announcement.type === "Property" && (
-                              <Home className="h-5 w-5 text-amber-600" />
-                            )) || <FileText className="h-5 w-5 text-amber-600" />}
-                        </div>
-                        <Badge
-                          variant="secondary"
-                          className={`text-xs ${
-                            announcement.type === "Maintenance"
-                              ? "bg-amber-100 text-amber-800"
-                              : announcement.type === "Event"
-                              ? "bg-amber-100 text-amber-800"
-                              : "bg-amber-100 text-amber-800"
-                          }`}
-                        >
-                          {announcement.type}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-lg">
-                        {announcement.title}
-                      </CardTitle>
-                      <CardDescription className="text-xs text-gray-500">
-                        {announcement.date}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <p className="text-sm text-gray-600">
-                        {announcement.content}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Board Members Section */}
-      <section id="board" className="py-16 bg-white/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-              Board of Directors
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Meet the dedicated professionals who guide our community with
-              expertise and care.
-            </p>
-          </motion.div>
-
-          <div className="relative">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {(publicBoard.length
-                ? publicBoard
-                : [
-                    {
-                      id: "fallback-sj",
-                      name: "Board Updates Coming Soon",
-                      position: "Board of Directors",
-                      email: "rrcboardemail@gmail.com",
-                      phone: "",
-                      initials: "RR",
-                    },
-                  ]
-              ).map((member, index) => (
-                <motion.div
-                  key={member.id ?? member.email ?? member.name}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                    <CardHeader className="text-center pb-3">
-                      <Avatar className="w-16 h-16 mx-auto mb-3">
-                        <AvatarFallback className="bg-amber-100 text-amber-800 text-lg font-semibold">
-                          {(
-                            member.initials?.trim() ||
-                            initialsFromName(member.name)
-                          ).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <CardTitle className="text-lg">{member.name}</CardTitle>
-                      <CardDescription className="text-amber-700 font-medium text-sm">
-                        {member.position}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-0 space-y-2">
-                      <div className="flex items-center space-x-2 text-xs text-gray-600">
-                        <Mail className="h-3 w-3" />
-                        <span className="truncate">{member.email}</span>
-                      </div>
-                      {member.phone ? (
-                        <div className="flex items-center space-x-2 text-xs text-gray-600">
-                          <Phone className="h-3 w-3" />
-                          <span>{member.phone}</span>
-                        </div>
-                      ) : null}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* Building Overview Section */}
@@ -880,9 +603,122 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Association Resources */}
-      <section id="documents" className="py-16 bg-white/30">
+      {/* Recent Announcements */}
+      <section className="py-16 bg-gradient-to-r from-amber-50 to-amber-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Recent Announcements */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="mb-12"
+          >
+            <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+              Recent Announcements
+            </h3>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                {
+                  title: "HOA Meeting — March 5, 2026",
+                  content:
+                    "The Board held a meeting on March 5, 2026, to discuss the additional funds necessary for the 40-year recertification and to hear residents' concerns. The HOA is actively working to address that feedback and has launched this website to keep you informed on current events, upcoming projects, and association documents. Stay connected with your neighbors: the HOA has created a dedicated River Run Condominium group on Nextdoor—join the app and the group to participate in the community conversation.",
+                  date: "March 5, 2026",
+                  icon: <Users className="h-5 w-5 text-amber-600" />,
+                  type: "Meeting",
+                },
+                {
+                  title: "Future Projects — Greenspace and Marina Area",
+                  content:
+                    "We've started tailoring the greenspace for residents' enjoyment by removing trees that were a liability to boaters and residents and impeded the view. Next up: cover and bench/seating in the greenspace next to the marina (formerly the racquetball courts), including picnic tables and benches. Last in the plan is a future BBQ addition for residents' enjoyment.",
+                  date: "In progress",
+                  icon: <Home className="h-5 w-5 text-amber-600" />,
+                  type: "Property",
+                },
+                {
+                  title: "40-Year Recertification Project",
+                  content:
+                    "The building is currently undergoing its mandatory 40-year recertification process. This comprehensive project will span approximately 12 weeks and includes structural inspections, exterior painting updates, and garage facility renovations to ensure continued compliance and safety standards.",
+                  date: "October 25, 2025",
+                  icon: <FileText className="h-5 w-5 text-amber-600" />,
+                  type: "Maintenance",
+                },
+              ].map((announcement, index) => (
+                <motion.div
+                  key={announcement.title}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                          {announcement.icon}
+                        </div>
+                        <Badge
+                          variant="secondary"
+                          className={`text-xs ${
+                            announcement.type === "Maintenance"
+                              ? "bg-amber-100 text-amber-800"
+                              : announcement.type === "Event"
+                              ? "bg-amber-100 text-amber-800"
+                              : "bg-amber-100 text-amber-800"
+                          }`}
+                        >
+                          {announcement.type}
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-lg">
+                        {announcement.title}
+                      </CardTitle>
+                      <CardDescription className="text-xs text-gray-500">
+                        {announcement.date}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <p className="text-sm text-gray-600">
+                        {announcement.content}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Association Resources */}
+      <section ref={documentsSectionRef} id="documents" className="relative py-16 bg-white/30 overflow-hidden">
+        {/* Sparkle celebration when section comes into view */}
+        <AnimatePresence>
+          {sparkleParticles.length > 0 && (
+            <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+              {sparkleParticles.map((p) => (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scale: [0, 1.2, 0.5],
+                    x: Math.cos((p.angle * Math.PI) / 180) * 120 + p.x,
+                    y: Math.sin((p.angle * Math.PI) / 180) * 120 + p.y,
+                  }}
+                  transition={{
+                    duration: 1.2,
+                    delay: p.delay,
+                    ease: "easeOut",
+                  }}
+                  className="absolute h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]"
+                  style={{ willChange: "transform, opacity" }}
+                />
+              ))}
+            </div>
+          )}
+        </AnimatePresence>
+        <div className="relative z-0 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -978,6 +814,167 @@ export default function HomePage() {
               </div>
             );
           })()}
+        </div>
+      </section>
+
+      {/* Board Members Section */}
+      <section id="board" className="py-16 bg-white/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+              Board of Directors
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Meet the dedicated professionals who guide our community with
+              expertise and care.
+            </p>
+          </motion.div>
+
+          <div className="relative">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 blur-sm">
+              {[
+                {
+                  name: "Sarah Johnson",
+                  position: "President",
+                  email: "RRCBoardEmail@Gmail.com",
+                  phone: "(305) 555-0101",
+                  initials: "SJ",
+                },
+                {
+                  name: "Michael Rodriguez",
+                  position: "Vice President",
+                  email: "RRCBoardEmail@Gmail.com",
+                  phone: "(305) 555-0102",
+                  initials: "MR",
+                },
+                {
+                  name: "Jennifer Chen",
+                  position: "Treasurer",
+                  email: "RRCBoardEmail@Gmail.com",
+                  phone: "(305) 555-0103",
+                  initials: "JC",
+                },
+                {
+                  name: "David Thompson",
+                  position: "Secretary",
+                  email: "RRCBoardEmail@Gmail.com",
+                  phone: "(305) 555-0104",
+                  initials: "DT",
+                },
+                {
+                  name: "Maria Gonzalez",
+                  position: "Board Member",
+                  email: "RRCBoardEmail@Gmail.com",
+                  phone: "(305) 555-0105",
+                  initials: "MG",
+                },
+                {
+                  name: "Robert Kim",
+                  position: "Board Member",
+                  email: "RRCBoardEmail@Gmail.com",
+                  phone: "(305) 555-0106",
+                  initials: "RK",
+                },
+              ].map((member, index) => (
+                <motion.div
+                  key={member.name}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                    <CardHeader className="text-center pb-3">
+                      <Avatar className="w-16 h-16 mx-auto mb-3">
+                        <AvatarImage src={`/api/placeholder/64/64`} />
+                        <AvatarFallback className="bg-amber-100 text-amber-800 text-lg font-semibold">
+                          {member.initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <CardTitle className="text-lg">{member.name}</CardTitle>
+                      <CardDescription className="text-amber-700 font-medium text-sm">
+                        {member.position}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-0 space-y-2">
+                      <div className="flex items-center space-x-2 text-xs text-gray-600">
+                        <Mail className="h-3 w-3" />
+                        <span className="truncate">{member.email}</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-xs text-gray-600">
+                        <Phone className="h-3 w-3" />
+                        <span>{member.phone}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Board Election Notice Overlay */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              viewport={{ once: true }}
+              className="absolute inset-0 flex items-center justify-center z-20"
+            >
+              <div className="relative bg-white/95 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-2xl max-w-4xl mx-4 overflow-hidden">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-5">
+                  <div className="absolute top-0 left-0 w-32 h-32 bg-amber-600 rounded-full -translate-x-16 -translate-y-16"></div>
+                  <div className="absolute bottom-0 right-0 w-24 h-24 bg-amber-700 rounded-full translate-x-12 translate-y-12"></div>
+                  <div className="absolute top-1/2 left-1/2 w-16 h-16 bg-amber-500 rounded-full -translate-x-8 -translate-y-8"></div>
+                </div>
+
+                <div className="relative z-10">
+                  <div className="flex items-center justify-center mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-amber-600 to-amber-700 rounded-full flex items-center justify-center shadow-lg">
+                      <Calendar className="h-8 w-8 text-white" />
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                      2026 Board Election
+                    </h3>
+                    <p className="text-lg text-gray-700 mb-4 max-w-3xl mx-auto leading-relaxed">
+                      River Run Condominium will be conducting elections for the
+                      2026 Board of Directors shortly. We are committed to
+                      maintaining transparency and community involvement in our
+                      governance process.
+                    </p>
+                    <p className="text-base text-gray-600 mb-6 max-w-2xl mx-auto">
+                      The website will be updated with the new board member
+                      information immediately following the election results.
+                    </p>
+
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                      <div className="flex items-center space-x-2 text-amber-700">
+                        <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+                        <span className="text-sm font-medium">
+                          Election Process Underway
+                        </span>
+                      </div>
+                      <div className="hidden sm:block w-px h-4 bg-amber-300"></div>
+                      <div className="flex items-center space-x-2 text-amber-700">
+                        <Bell className="h-4 w-4" />
+                        <span className="text-sm font-medium">
+                          Updates Coming Soon
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
