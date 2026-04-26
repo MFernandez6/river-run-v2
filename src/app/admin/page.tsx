@@ -56,6 +56,14 @@ export default function AdminDashboardPage() {
   async function saveAll() {
     setSaving(true);
     try {
+      const normalizedAnnouncements = announcements
+        .map((a) => ({
+          ...a,
+          updatedAt: a.updatedAt ?? new Date().toISOString(),
+        }))
+        .sort((a, b) => (b.updatedAt ?? "").localeCompare(a.updatedAt ?? ""))
+        .slice(0, 6);
+
       const res = await Promise.all([
         fetch("/api/admin/board", {
           method: "PUT",
@@ -65,11 +73,12 @@ export default function AdminDashboardPage() {
         fetch("/api/admin/announcements", {
           method: "PUT",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ items: announcements }),
+          body: JSON.stringify({ items: normalizedAnnouncements }),
         }),
       ]);
       const bad = res.find((r) => !r.ok);
       if (bad) throw new Error("Save failed");
+      setAnnouncements(normalizedAnnouncements);
     } finally {
       setSaving(false);
     }
@@ -78,14 +87,25 @@ export default function AdminDashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-100 via-amber-50 to-amber-200 p-4 sm:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="glass border-0 shadow-xl rounded-2xl px-4 py-3 sm:px-6 sm:py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Admin</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+              Admin Portal
+            </h1>
             <p className="text-sm text-gray-600">
-              Update board members and recent announcements.
+              Board members and recent announcements.
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant="outline"
+              className="rounded-xl"
+              onClick={() => {
+                window.location.href = "/";
+              }}
+            >
+              View site
+            </Button>
             <Button
               variant="outline"
               className="rounded-xl"

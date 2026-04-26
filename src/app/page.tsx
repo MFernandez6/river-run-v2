@@ -7,7 +7,6 @@ import {
   Building2,
   MapPin,
   Users,
-  Calendar,
   Phone,
   Mail,
   Navigation,
@@ -49,6 +48,37 @@ export default function HomePage() {
   const [sparkleParticles, setSparkleParticles] = useState<{ id: number; angle: number; delay: number; x: number; y: number }[]>([]);
   const documentsSectionRef = useRef<HTMLElement>(null);
   const documentsInView = useInView(documentsSectionRef, { once: true, amount: 0.2 });
+  const [publicAnnouncements, setPublicAnnouncements] = useState<
+    { id: string; title: string; content: string; date: string; type: string; updatedAt?: string }[]
+  >([]);
+  const [publicBoard, setPublicBoard] = useState<
+    { id: string; name: string; position: string; email: string; phone?: string; initials?: string }[]
+  >([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const [a, b] = await Promise.all([
+        fetch("/api/public/announcements").then((r) => r.json()).catch(() => null),
+        fetch("/api/public/board").then((r) => r.json()).catch(() => null),
+      ]);
+      if (cancelled) return;
+      const announcements = Array.isArray(a?.items) ? a.items : [];
+      const board = Array.isArray(b?.items) ? b.items : [];
+      setPublicAnnouncements(
+        announcements
+          .slice()
+          .sort((x: { updatedAt?: string }, y: { updatedAt?: string }) =>
+            String(y.updatedAt ?? "").localeCompare(String(x.updatedAt ?? ""))
+          )
+          .slice(0, 6)
+      );
+      setPublicBoard(board);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!documentsInView || hasCelebrated) return;
@@ -620,34 +650,18 @@ export default function HomePage() {
               Recent Announcements
             </h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
+              {(publicAnnouncements.length ? publicAnnouncements : [
                 {
+                  id: "fallback-1",
                   title: "HOA Meeting — March 5, 2026",
                   content:
                     "The Board held a meeting on March 5, 2026, to discuss the additional funds necessary for the 40-year recertification and to hear residents' concerns. The HOA is actively working to address that feedback and has launched this website to keep you informed on current events, upcoming projects, and association documents. Stay connected with your neighbors: the HOA has created a dedicated River Run Condominium group on Nextdoor—join the app and the group to participate in the community conversation.",
                   date: "March 5, 2026",
-                  icon: <Users className="h-5 w-5 text-amber-600" />,
                   type: "Meeting",
                 },
-                {
-                  title: "Future Projects — Greenspace and Marina Area",
-                  content:
-                    "We've started tailoring the greenspace for residents' enjoyment by removing trees that were a liability to boaters and residents and impeded the view. Next up: cover and bench/seating in the greenspace next to the marina (formerly the racquetball courts), including picnic tables and benches. Last in the plan is a future BBQ addition for residents' enjoyment.",
-                  date: "In progress",
-                  icon: <Home className="h-5 w-5 text-amber-600" />,
-                  type: "Property",
-                },
-                {
-                  title: "40-Year Recertification Project",
-                  content:
-                    "The building is currently undergoing its mandatory 40-year recertification process. This comprehensive project will span approximately 12 weeks and includes structural inspections, exterior painting updates, and garage facility renovations to ensure continued compliance and safety standards.",
-                  date: "October 25, 2025",
-                  icon: <FileText className="h-5 w-5 text-amber-600" />,
-                  type: "Maintenance",
-                },
-              ].map((announcement, index) => (
+              ]).map((announcement, index) => (
                 <motion.div
-                  key={announcement.title}
+                  key={announcement.id ?? announcement.title}
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: index * 0.1 }}
@@ -657,7 +671,12 @@ export default function HomePage() {
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between mb-3">
                         <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                          {announcement.icon}
+                          {(announcement.type === "Meeting" && (
+                            <Users className="h-5 w-5 text-amber-600" />
+                          )) ||
+                            (announcement.type === "Property" && (
+                              <Home className="h-5 w-5 text-amber-600" />
+                            )) || <FileText className="h-5 w-5 text-amber-600" />}
                         </div>
                         <Badge
                           variant="secondary"
@@ -839,53 +858,22 @@ export default function HomePage() {
           </motion.div>
 
           <div className="relative">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 blur-sm">
-              {[
-                {
-                  name: "Sarah Johnson",
-                  position: "President",
-                  email: "RRCBoardEmail@Gmail.com",
-                  phone: "(305) 555-0101",
-                  initials: "SJ",
-                },
-                {
-                  name: "Michael Rodriguez",
-                  position: "Vice President",
-                  email: "RRCBoardEmail@Gmail.com",
-                  phone: "(305) 555-0102",
-                  initials: "MR",
-                },
-                {
-                  name: "Jennifer Chen",
-                  position: "Treasurer",
-                  email: "RRCBoardEmail@Gmail.com",
-                  phone: "(305) 555-0103",
-                  initials: "JC",
-                },
-                {
-                  name: "David Thompson",
-                  position: "Secretary",
-                  email: "RRCBoardEmail@Gmail.com",
-                  phone: "(305) 555-0104",
-                  initials: "DT",
-                },
-                {
-                  name: "Maria Gonzalez",
-                  position: "Board Member",
-                  email: "RRCBoardEmail@Gmail.com",
-                  phone: "(305) 555-0105",
-                  initials: "MG",
-                },
-                {
-                  name: "Robert Kim",
-                  position: "Board Member",
-                  email: "RRCBoardEmail@Gmail.com",
-                  phone: "(305) 555-0106",
-                  initials: "RK",
-                },
-              ].map((member, index) => (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {(publicBoard.length
+                ? publicBoard
+                : [
+                    {
+                      id: "fallback-sj",
+                      name: "Board Updates Coming Soon",
+                      position: "Board of Directors",
+                      email: "rrcboardemail@gmail.com",
+                      phone: "",
+                      initials: "RR",
+                    },
+                  ]
+              ).map((member, index) => (
                 <motion.div
-                  key={member.name}
+                  key={member.id ?? member.email ?? member.name}
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: index * 0.1 }}
@@ -909,73 +897,17 @@ export default function HomePage() {
                         <Mail className="h-3 w-3" />
                         <span className="truncate">{member.email}</span>
                       </div>
-                      <div className="flex items-center space-x-2 text-xs text-gray-600">
-                        <Phone className="h-3 w-3" />
-                        <span>{member.phone}</span>
-                      </div>
+                      {member.phone ? (
+                        <div className="flex items-center space-x-2 text-xs text-gray-600">
+                          <Phone className="h-3 w-3" />
+                          <span>{member.phone}</span>
+                        </div>
+                      ) : null}
                     </CardContent>
                   </Card>
                 </motion.div>
               ))}
             </div>
-
-            {/* Board Election Notice Overlay */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              viewport={{ once: true }}
-              className="absolute inset-0 flex items-center justify-center z-20"
-            >
-              <div className="relative bg-white/95 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-2xl max-w-4xl mx-4 overflow-hidden">
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-5">
-                  <div className="absolute top-0 left-0 w-32 h-32 bg-amber-600 rounded-full -translate-x-16 -translate-y-16"></div>
-                  <div className="absolute bottom-0 right-0 w-24 h-24 bg-amber-700 rounded-full translate-x-12 translate-y-12"></div>
-                  <div className="absolute top-1/2 left-1/2 w-16 h-16 bg-amber-500 rounded-full -translate-x-8 -translate-y-8"></div>
-                </div>
-
-                <div className="relative z-10">
-                  <div className="flex items-center justify-center mb-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-amber-600 to-amber-700 rounded-full flex items-center justify-center shadow-lg">
-                      <Calendar className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-
-                  <div className="text-center">
-                    <h3 className="text-2xl font-bold text-gray-800 mb-3">
-                      2026 Board Election
-                    </h3>
-                    <p className="text-lg text-gray-700 mb-4 max-w-3xl mx-auto leading-relaxed">
-                      River Run Condominium will be conducting elections for the
-                      2026 Board of Directors shortly. We are committed to
-                      maintaining transparency and community involvement in our
-                      governance process.
-                    </p>
-                    <p className="text-base text-gray-600 mb-6 max-w-2xl mx-auto">
-                      The website will be updated with the new board member
-                      information immediately following the election results.
-                    </p>
-
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                      <div className="flex items-center space-x-2 text-amber-700">
-                        <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
-                        <span className="text-sm font-medium">
-                          Election Process Underway
-                        </span>
-                      </div>
-                      <div className="hidden sm:block w-px h-4 bg-amber-300"></div>
-                      <div className="flex items-center space-x-2 text-amber-700">
-                        <Bell className="h-4 w-4" />
-                        <span className="text-sm font-medium">
-                          Updates Coming Soon
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
           </div>
         </div>
       </section>

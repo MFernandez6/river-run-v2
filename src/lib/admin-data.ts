@@ -6,6 +6,7 @@ export type Announcement = {
   content: string;
   date: string;
   type: string;
+  updatedAt?: string;
 };
 
 export type BoardMember = {
