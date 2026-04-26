@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
 import { getBoard, setBoard } from "@/lib/admin-data";
-import { requireAdminSession } from "@/lib/admin-auth";
+import { requireAdminSessionFromRequest } from "@/lib/admin-auth";
 
-export async function GET() {
-  if (!(await requireAdminSession())) {
+export const dynamic = "force-dynamic";
+
+export async function GET(req: Request) {
+  if (!(await requireAdminSessionFromRequest(req))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   return NextResponse.json({ items: await getBoard() });
 }
 
 export async function PUT(req: Request) {
-  if (!(await requireAdminSession())) {
+  if (!(await requireAdminSessionFromRequest(req))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const body = await req.json().catch(() => null);
@@ -20,4 +22,3 @@ export async function PUT(req: Request) {
   await setBoard(items);
   return NextResponse.json({ ok: true });
 }
-

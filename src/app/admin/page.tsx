@@ -29,9 +29,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { Announcement, BoardMember } from "@/lib/admin-data";
+import { useAdminIdleLogout } from "./use-admin-activity";
 
 function uid() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+const adminCred = { credentials: "same-origin" as const };
+
+function redirectToAdminLogin(reason: "session" | "idle" = "session") {
+  window.location.assign(`/admin/login?reason=${reason}`);
 }
 
 function downloadJson(filename: string, data: unknown) {
@@ -63,6 +70,8 @@ export default function AdminDashboardPage() {
     string | null
   >(null);
 
+  useAdminIdleLogout();
+
   function patchBoard(updater: SetStateAction<BoardMember[]>) {
     boardTouchedRef.current = true;
     setBoard(updater);
@@ -81,11 +90,17 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [b, a] = await Promise.all([
-        fetch("/api/admin/board").then((r) => r.json()),
-        fetch("/api/admin/announcements").then((r) => r.json()),
+      const [boardRes, annRes] = await Promise.all([
+        fetch("/api/admin/board", adminCred),
+        fetch("/api/admin/announcements", adminCred),
       ]);
       if (cancelled) return;
+      if (boardRes.status === 401 || annRes.status === 401) {
+        redirectToAdminLogin("session");
+        return;
+      }
+      const b = await boardRes.json();
+      const a = await annRes.json();
       setBoard(Array.isArray(b?.items) ? b.items : []);
       setAnnouncements(Array.isArray(a?.items) ? a.items : []);
       setLoading(false);
@@ -107,13 +122,21 @@ export default function AdminDashboardPage() {
     try {
       let annSource = announcements;
       if (!announcementsTouchedRef.current) {
-        const r = await fetch("/api/admin/announcements");
+        const r = await fetch("/api/admin/announcements", adminCred);
+        if (r.status === 401) {
+          redirectToAdminLogin("session");
+          return;
+        }
         const j = await r.json();
         annSource = Array.isArray(j?.items) ? j.items : [];
       }
       let boardSource = board;
       if (!boardTouchedRef.current) {
-        const r = await fetch("/api/admin/board");
+        const r = await fetch("/api/admin/board", adminCred);
+        if (r.status === 401) {
+          redirectToAdminLogin("session");
+          return;
+        }
         const j = await r.json();
         boardSource = Array.isArray(j?.items) ? j.items : [];
       }
@@ -128,16 +151,22 @@ export default function AdminDashboardPage() {
 
       const res = await Promise.all([
         fetch("/api/admin/board", {
+          ...adminCred,
           method: "PUT",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ items: boardSource }),
         }),
         fetch("/api/admin/announcements", {
+          ...adminCred,
           method: "PUT",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ items: normalizedAnnouncements }),
         }),
       ]);
+      if (res.some((r) => r.status === 401)) {
+        redirectToAdminLogin("session");
+        return;
+      }
       const bad = res.find((r) => !r.ok);
       if (bad) throw new Error("Save failed");
       setAnnouncements(normalizedAnnouncements);
@@ -241,7 +270,10 @@ export default function AdminDashboardPage() {
               size="sm"
               className="rounded-full border-amber-200/80 bg-white/50"
               onClick={async () => {
-                await fetch("/api/admin/logout", { method: "POST" });
+                await fetch("/api/admin/logout", {
+                  ...adminCred,
+                  method: "POST",
+                });
                 router.push("/admin/login");
                 router.refresh();
               }}

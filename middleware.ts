@@ -1,16 +1,24 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { kv } from "@vercel/kv";
-
-const SESSION_COOKIE = "rr_admin_session";
-const SESSION_PREFIX = "rr:admin:session:";
+import {
+  ADMIN_SESSION_COOKIE,
+  parseAdminSessionTokenFromCookieHeader,
+  validateAndTouchAdminSession,
+} from "@/lib/admin-session-store";
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  if (pathname.startsWith("/admin/login")) return NextResponse.next();
+  if (
+    pathname.startsWith("/admin/login") ||
+    pathname.startsWith("/api/admin/login")
+  ) {
+    return NextResponse.next();
+  }
 
-  const token = req.cookies.get(SESSION_COOKIE)?.value;
+  const token =
+    req.cookies.get(ADMIN_SESSION_COOKIE)?.value ??
+    parseAdminSessionTokenFromCookieHeader(req.headers.get("cookie"));
   if (!token) {
     const url = req.nextUrl.clone();
     url.pathname = "/admin/login";
@@ -18,8 +26,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  const ok = await kv.get(`${SESSION_PREFIX}${token}`);
-  if (!ok) {
+  if (!(await validateAndTouchAdminSession(token))) {
     const url = req.nextUrl.clone();
     url.pathname = "/admin/login";
     url.searchParams.set("next", pathname);
@@ -32,4 +39,3 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: ["/admin/:path*", "/api/admin/:path*"],
 };
-

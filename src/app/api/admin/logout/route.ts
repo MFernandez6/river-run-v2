@@ -1,8 +1,18 @@
 import { NextResponse } from "next/server";
-import { destroyAdminSession } from "@/lib/admin-auth";
+import { clearAdminSessionCookie } from "@/lib/admin-auth";
+import {
+  adminSessionDelete,
+  parseAdminSessionTokenFromCookieHeader,
+} from "@/lib/admin-session-store";
 
-export async function POST() {
-  await destroyAdminSession();
-  return NextResponse.json({ ok: true });
+export const dynamic = "force-dynamic";
+
+export async function POST(req: Request) {
+  const token = parseAdminSessionTokenFromCookieHeader(
+    req.headers.get("cookie")
+  );
+  if (token) await adminSessionDelete(token);
+  const res = NextResponse.json({ ok: true });
+  clearAdminSessionCookie(res);
+  return res;
 }
-

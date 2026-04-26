@@ -18,6 +18,7 @@ export default function AdminLoginClientPage() {
   const params = useSearchParams();
   const router = useRouter();
   const next = params.get("next") ?? "/admin";
+  const signOutReason = params.get("reason");
 
   const [email, setEmail] = useState("rrcboardemail@gmail.com");
   const [password, setPassword] = useState("");
@@ -30,6 +31,7 @@ export default function AdminLoginClientPage() {
     try {
       const res = await fetch("/api/admin/login", {
         method: "POST",
+        credentials: "same-origin",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
@@ -87,6 +89,18 @@ export default function AdminLoginClientPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-2">
+              {signOutReason === "idle" && (
+                <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50/95 px-3 py-2.5 text-sm text-amber-950">
+                  You were signed out after 90 seconds with no activity. Sign
+                  in again to continue.
+                </div>
+              )}
+              {signOutReason === "session" && (
+                <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50/95 px-3 py-2.5 text-sm text-amber-950">
+                  Your session ended or is no longer valid. Please sign in
+                  again.
+                </div>
+              )}
               <form
                 className="space-y-4"
                 onSubmit={(e) => {

@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { createAdminSession, verifyAdminCredentials } from "@/lib/admin-auth";
+import {
+  attachAdminSessionCookie,
+  issueAdminSessionToken,
+  verifyAdminCredentials,
+} from "@/lib/admin-auth";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
@@ -14,11 +20,12 @@ export async function POST(req: Request) {
       );
     }
 
-    await createAdminSession();
-    return NextResponse.json({ ok: true });
+    const token = await issueAdminSessionToken();
+    const res = NextResponse.json({ ok: true });
+    attachAdminSessionCookie(res, token);
+    return res;
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Internal Server Error";
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
-
