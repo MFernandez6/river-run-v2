@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,6 @@ import {
 
 export default function AdminLoginClientPage() {
   const params = useSearchParams();
-  const router = useRouter();
   const next = params.get("next") ?? "/admin";
   const signOutReason = params.get("reason");
 
@@ -39,8 +38,11 @@ export default function AdminLoginClientPage() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data?.error ?? "Login failed");
       }
-      router.push(next);
-      router.refresh();
+      // Ensure cookie is applied before navigation.
+      const s = await fetch("/api/admin/session", { credentials: "same-origin" });
+      if (!s.ok) throw new Error("Session could not be established. Try again.");
+      // Hard navigation avoids any cookie race in production.
+      window.location.assign(next);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Login failed");
     } finally {
