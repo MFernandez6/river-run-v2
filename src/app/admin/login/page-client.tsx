@@ -13,7 +13,6 @@ export default function AdminLoginClientPage() {
   const params = useSearchParams();
   const next = params.get("next") ?? "/admin";
 
-  const [email, setEmail] = useState("rrcboardemail@gmail.com");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -67,15 +66,21 @@ export default function AdminLoginClientPage() {
                       method: "POST",
                       credentials: "same-origin",
                       headers: { "content-type": "application/json" },
-                      body: JSON.stringify({ email, password }),
+                      body: JSON.stringify({ password }),
                     });
                     const data = await res.json().catch(() => ({}));
-                    if (!res.ok) throw new Error(data?.error ?? "Login failed");
+                    if (!res.ok) {
+                      const msg =
+                        typeof data?.error === "string"
+                          ? data.error
+                          : "Login failed";
+                      throw new Error(msg);
+                    }
                     router.push(next);
                     router.refresh();
                   } catch (err) {
                     setError(
-                      err instanceof Error ? err.message : "Login failed"
+                      err instanceof Error ? err.message : "Login failed",
                     );
                   } finally {
                     setLoading(false);
@@ -84,19 +89,7 @@ export default function AdminLoginClientPage() {
               >
                 <div className="space-y-2">
                   <label className="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                    Email
-                  </label>
-                  <input
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl border border-white/40 bg-white/90 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-300/80"
-                    type="email"
-                    autoComplete="email"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                    Password
+                    Admin password
                   </label>
                   <input
                     value={password}
@@ -104,14 +97,15 @@ export default function AdminLoginClientPage() {
                     className="w-full rounded-xl border border-white/40 bg-white/90 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-300/80"
                     type="password"
                     autoComplete="current-password"
+                    placeholder="Enter password"
                   />
                 </div>
 
-                {error && (
+                {error ? (
                   <div className="rounded-xl bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
                     {error}
                   </div>
-                )}
+                ) : null}
 
                 <Button
                   type="submit"
@@ -122,11 +116,9 @@ export default function AdminLoginClientPage() {
                 </Button>
 
                 <p className="text-xs text-gray-500 text-center leading-relaxed">
-                  Access is restricted to{" "}
-                  <span className="font-semibold text-gray-700">
-                    rrcboardemail@gmail.com
-                  </span>
-                  .
+                  Password is set in Vercel (or <code className="text-gray-700">.env.local</code> for
+                  local). Share only with current board officers; rotate it when
+                  membership changes.
                 </p>
               </form>
             </CardContent>
@@ -136,4 +128,3 @@ export default function AdminLoginClientPage() {
     </div>
   );
 }
-

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion, AnimatePresence, useInView } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   Building2,
   MapPin,
@@ -48,32 +48,45 @@ export default function HomePage() {
     { id: string; title: string; content: string; dateLabel: string; type: string; createdAt: string }[]
   >([]);
   const [publicBoard, setPublicBoard] = useState<
-    { id: string; name: string; position: string; email: string; phone?: string | null; photoUrl?: string | null; createdAt: string }[]
+    {
+      id: string;
+      name: string;
+      position: string;
+      email: string;
+      phone?: string | null;
+      photoUrl?: string | null;
+      createdAt: string;
+    }[]
   >([]);
   const [hasCelebrated, setHasCelebrated] = useState(false);
   const [sparkleParticles, setSparkleParticles] = useState<{ id: number; angle: number; delay: number; x: number; y: number }[]>([]);
   const documentsSectionRef = useRef<HTMLElement>(null);
   const documentsInView = useInView(documentsSectionRef, { once: true, amount: 0.2 });
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const [a, b] = await Promise.all([
-        fetch("/api/public/announcements", { cache: "no-store" })
-          .then((r) => r.json())
-          .catch(() => null),
-        fetch("/api/public/board", { cache: "no-store" })
-          .then((r) => r.json())
-          .catch(() => null),
-      ]);
-      if (cancelled) return;
-      setPublicAnnouncements(Array.isArray(a?.items) ? a.items : []);
-      setPublicBoard(Array.isArray(b?.items) ? b.items : []);
-    })();
-    return () => {
-      cancelled = true;
-    };
+  const loadPublicContent = useCallback(async () => {
+    const [a, b] = await Promise.all([
+      fetch("/api/public/announcements", { cache: "no-store" })
+        .then((r) => r.json())
+        .catch(() => null),
+      fetch("/api/public/board", { cache: "no-store" })
+        .then((r) => r.json())
+        .catch(() => null),
+    ]);
+    setPublicAnnouncements(Array.isArray(a?.items) ? a.items : []);
+    setPublicBoard(Array.isArray(b?.items) ? b.items : []);
   }, []);
+
+  useEffect(() => {
+    void loadPublicContent();
+  }, [loadPublicContent]);
+
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") void loadPublicContent();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [loadPublicContent]);
 
   useEffect(() => {
     if (!documentsInView || hasCelebrated) return;
@@ -179,7 +192,6 @@ export default function HomePage() {
                 { name: "Prop. Mgmt", href: "#property-management" },
                 { name: "News", href: "#news" },
                 { name: "Contact", href: "#contact" },
-                { name: "Admin", href: "/admin/login" },
               ].map((item) => (
                 <motion.a
                   key={item.name}
@@ -220,7 +232,6 @@ export default function HomePage() {
                   { name: "Property Management", href: "#property-management" },
                   { name: "News", href: "#news" },
                   { name: "Contact", href: "#contact" },
-                  { name: "Admin", href: "/admin/login" },
                 ].map((item) => (
                   <a
                     key={item.name}
@@ -757,80 +768,85 @@ export default function HomePage() {
               Association Resources
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Key documents organized by category. Click a card to open the folder.
+              These are general request categories only—not a catalog of files or
+              contents. Availability and format are confirmed when an owner works
+              with property management through the normal records process.
             </p>
           </motion.div>
 
           {(() => {
             const docs = [
               {
-                title: "Wind Mitigation + Elevation Certificate + Appraisal",
-                description: "Wind mitigation report, elevation certificate, and property appraisal documentation.",
-                href: "https://drive.google.com/drive/folders/1W9_ON8-bI3b-9kbNUo_hHjcrDHyCfAhU?usp=drive_link",
+                title: "Certifications & valuation",
+                description:
+                  "Association-held materials sometimes needed for routine owner or lender questions. What can be shared is determined case by case under policy.",
                 icon: Shield,
               },
               {
-                title: "Insurance",
-                description: "Contractor and RRCA insurance documentation.",
-                href: "https://drive.google.com/drive/folders/11hzoujLb4_7uiLEFXaKAtbXBE6p3A4rb?usp=drive_link",
+                title: "Insurance & coverage",
+                description:
+                  "Documentation the association may provide to insurers, lenders, or counsel as permitted. Management confirms what applies to your request.",
                 icon: Shield,
               },
               {
-                title: "40 Year Recertification Docs",
-                description: "Engineering reports, SIRS, permits, and recertification documentation.",
-                href: "https://drive.google.com/drive/folders/1KerWSWmxkmBOWe4TRvowKY5XmxD7MFux?usp=drive_link",
+                title: "Engineering & compliance",
+                description:
+                  "Professional reports and filings related to building safety and regulatory obligations. Requests are handled through management; specifics are not listed on this site.",
                 icon: Building2,
               },
               {
-                title: "Rules",
-                description: "Governing documents, declaration, EV charging policy, and association rules.",
-                href: "https://drive.google.com/drive/folders/1EmHTGAipH8lAFi6eCXxeuW1OuCNaL7y9?usp=sharing",
+                title: "Rules & recorded instruments",
+                description:
+                  "Official community instruments and adopted rules in effect for the association. Distribution follows the board’s records practices.",
                 icon: FileText,
               },
               {
-                title: "Financials",
-                description: "Association financial reports and budgets.",
-                href: "https://drive.google.com/drive/folders/1Jx6VI6MurVf1PusP-gRLhrc-UqRY6814?usp=sharing",
+                title: "Budgets & financial reporting",
+                description:
+                  "Owner-accessible budgets and financial summaries as required by law and the association’s records policy—not a line-by-line public ledger.",
                 icon: TrendingUp,
               },
               {
-                title: "Contractor Photos & Videos",
-                description: "Pictures and videos of work completed by the contractor for the 40-year recertification and related projects.",
-                href: "https://www.dropbox.com/scl/fo/70pifcqy682n50silkh9p/AEtro_yWkm_mLOViT_LLAtk?rlkey=0o7fs1aot0nvdqmw44kkb6m15&st=wtr6ebcv&dl=0",
+                title: "Capital project records",
+                description:
+                  "Non-public materials from past or ongoing association projects. Release is limited to what policy and your request allow.",
                 icon: Building2,
               },
             ];
             const DocCard = ({ doc, index }: { doc: (typeof docs)[0]; index: number }) => {
               const DocIcon = doc.icon;
               return (
-                <motion.a
-                  href={doc.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <motion.div
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className="block h-full min-h-0 w-full min-w-0"
+                  className="h-full min-h-0 w-full min-w-0"
                 >
-                  <Card className="glass border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full group cursor-pointer flex flex-col">
+                  <Card className="glass border-0 shadow-lg h-full flex flex-col">
                     <CardHeader className="pb-3 flex-1 flex flex-col">
-                      <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-amber-200 transition-colors shrink-0">
+                      <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3 shrink-0">
                         <DocIcon className="h-5 w-5 text-amber-700" />
                       </div>
-                      <CardTitle className="text-xl text-gray-800 group-hover:text-amber-700 transition-colors">
+                      <CardTitle className="text-xl text-gray-800">
                         {doc.title}
                       </CardTitle>
-                      <CardDescription className="text-sm flex-1">
+                      <CardDescription className="text-sm flex-1 text-gray-600 leading-relaxed">
                         {doc.description}
                       </CardDescription>
-                      <span className="text-amber-600 text-sm font-medium mt-2 inline-flex items-center gap-1 shrink-0">
-                        Open folder
-                        <FileText className="h-4 w-4" />
-                      </span>
+                      <p className="text-amber-800/90 text-xs font-medium mt-3 pt-3 border-t border-amber-200/40 shrink-0">
+                        Owners: request by category through{" "}
+                        <a
+                          href="#property-management"
+                          className="underline underline-offset-2 hover:text-amber-950"
+                        >
+                          Property Management
+                        </a>
+                        .
+                      </p>
                     </CardHeader>
                   </Card>
-                </motion.a>
+                </motion.div>
               );
             };
             return (
@@ -858,27 +874,15 @@ export default function HomePage() {
               Board of Directors
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Meet the dedicated professionals who guide our community with
-              expertise and care.
+              {publicBoard.length > 0
+                ? "Meet the volunteers who guide our community with expertise and care."
+                : "Leadership and governance contacts will be listed here once the board roster is published for this term."}
             </p>
           </motion.div>
 
-          <div className="relative">
+          {publicBoard.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {(publicBoard.length
-                ? publicBoard
-                : [
-                    {
-                      id: "fallback",
-                      name: "Board Updates Coming Soon",
-                      position: "Board of Directors",
-                      email: "rrcboardemail@gmail.com",
-                      phone: null,
-                      photoUrl: null,
-                      createdAt: "",
-                    },
-                  ]
-              ).map((member, index) => (
+              {publicBoard.map((member, index) => (
                 <motion.div
                   key={member.id ?? member.email ?? member.name}
                   initial={{ opacity: 0, y: 50 }}
@@ -890,7 +894,7 @@ export default function HomePage() {
                     <CardHeader className="text-center pb-3">
                       <Avatar className="w-16 h-16 mx-auto mb-3">
                         {member.photoUrl ? (
-                          <AvatarImage src={member.photoUrl} />
+                          <AvatarImage src={member.photoUrl} alt="" />
                         ) : null}
                         <AvatarFallback className="bg-amber-100 text-amber-800 text-lg font-semibold">
                           {initialsFromName(member.name)}
@@ -902,13 +906,15 @@ export default function HomePage() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="pt-0 space-y-2">
-                      <div className="flex items-center space-x-2 text-xs text-gray-600">
-                        <Mail className="h-3 w-3" />
-                        <span className="truncate">{member.email}</span>
-                      </div>
+                      {member.email ? (
+                        <div className="flex items-center space-x-2 text-xs text-gray-600">
+                          <Mail className="h-3 w-3 shrink-0" />
+                          <span className="truncate">{member.email}</span>
+                        </div>
+                      ) : null}
                       {member.phone ? (
                         <div className="flex items-center space-x-2 text-xs text-gray-600">
-                          <Phone className="h-3 w-3" />
+                          <Phone className="h-3 w-3 shrink-0" />
                           <span>{member.phone}</span>
                         </div>
                       ) : null}
@@ -917,9 +923,47 @@ export default function HomePage() {
                 </motion.div>
               ))}
             </div>
-
-            {/* Admin-managed board members render above */}
-          </div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75 }}
+              viewport={{ once: true }}
+              className="relative mx-auto max-w-5xl rounded-3xl border border-amber-200/40 bg-gradient-to-b from-white/50 to-amber-50/30 shadow-xl overflow-hidden min-h-[340px]"
+            >
+              <div
+                className="grid grid-cols-2 md:grid-cols-3 gap-4 p-8 blur-sm pointer-events-none select-none opacity-55"
+                aria-hidden
+              >
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="rounded-2xl border border-white/50 bg-white/70 shadow-inner h-36 flex flex-col items-center justify-center gap-2 p-4"
+                  >
+                    <div className="h-12 w-12 rounded-full bg-amber-200/80" />
+                    <div className="h-2 w-24 rounded bg-gray-300/90" />
+                    <div className="h-2 w-16 rounded bg-gray-200/90" />
+                  </div>
+                ))}
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center p-6 sm:p-10">
+                <div className="max-w-md rounded-2xl border border-amber-200/70 bg-white/92 backdrop-blur-md shadow-lg px-6 py-7 sm:px-8 sm:py-8 text-center">
+                  <Badge className="mb-3 bg-amber-100 text-amber-900 border border-amber-300/60">
+                    Update
+                  </Badge>
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
+                    Board roster forthcoming
+                  </h3>
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                    The official Board of Directors listing—including officer
+                    titles and approved contact information—will appear here when
+                    published. Board members may also be added through the
+                    association&apos;s admin tools once those are in use.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
         </div>
       </section>
 
@@ -1108,7 +1152,7 @@ export default function HomePage() {
           </motion.div>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Elizabeth Perez Garcia Card */}
+            {/* Property management — general inquiries */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -1124,28 +1168,25 @@ export default function HomePage() {
                     Caribbean Property Management Inc.
                   </CardTitle>
                   <CardDescription className="text-amber-700 font-semibold text-lg">
-                    Elizabeth Perez Garcia
-                    <br />
-                    Contact
+                    General inquiries
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-gray-600 text-center mb-6">
-                    Primary contact for property management services and general
-                    inquiries.
+                    Property management services, billing questions, and
+                    association correspondence.
                   </p>
 
                   <div className="space-y-4">
-                    {/* Elizabeth Contact */}
                     <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
                       <div className="flex items-center space-x-3 mb-3">
                         <User className="h-5 w-5 text-amber-600" />
                         <div>
                           <p className="text-sm font-semibold text-gray-800">
-                            Elizabeth Perez Garcia
+                            Management office
                           </p>
                           <p className="text-gray-600 text-xs">
-                            Primary Contact
+                            Role-based inbox (not an individual)
                           </p>
                         </div>
                       </div>
@@ -1153,10 +1194,10 @@ export default function HomePage() {
                         <Mail className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <a
-                            href="mailto:efperezgarcia@caribbeanproperty.cc"
+                            href="mailto:info@caribbeanproperty.cc"
                             className="text-gray-800 hover:text-amber-600 font-semibold text-sm break-all"
                           >
-                            efperezgarcia@caribbeanproperty.cc
+                            info@caribbeanproperty.cc
                           </a>
                         </div>
                       </div>
@@ -1231,7 +1272,7 @@ export default function HomePage() {
               </Card>
             </motion.div>
 
-            {/* Juan & General Info Card */}
+            {/* Maintenance scheduling */}
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -1247,40 +1288,27 @@ export default function HomePage() {
                     Caribbean Property Management Inc.
                   </CardTitle>
                   <CardDescription className="text-amber-700 font-semibold text-lg">
-                    General Information
-                    <br />
-                    Contact
+                    Maintenance scheduling
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-gray-600 text-center mb-6">
-                    General office information and secondary contact for
-                    property management services.
+                    Coordinate scheduling and documentation through the office
+                    contacts listed below.
                   </p>
 
                   <div className="space-y-4">
-                    {/* Juan Contact */}
                     <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <User className="h-5 w-5 text-amber-600" />
+                      <div className="flex items-start space-x-3">
+                        <User className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
                         <div>
                           <p className="text-sm font-semibold text-gray-800">
-                            Juan
+                            Maintenance desk
                           </p>
-                          <p className="text-gray-600 text-xs">
-                            Secondary Contact
+                          <p className="text-gray-600 text-sm mt-1 leading-relaxed">
+                            Use the general office phone or email below for work
+                            orders, vendor access, and non-emergency maintenance.
                           </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-3">
-                        <Mail className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <a
-                            href="mailto:juan@caribbeanproperty.cc"
-                            className="text-gray-800 hover:text-amber-600 font-semibold text-sm break-all"
-                          >
-                            juan@caribbeanproperty.cc
-                          </a>
                         </div>
                       </div>
                     </div>
@@ -1397,19 +1425,17 @@ export default function HomePage() {
                     </div>
 
                     <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-                      <div className="flex items-center space-x-3">
-                        <User className="h-5 w-5 text-amber-600" />
+                      <div className="flex items-start space-x-3">
+                        <User className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                         <div>
                           <p className="text-sm font-semibold text-gray-800">
-                            On-Site Maintenance
+                            On-site maintenance
                           </p>
-                          <p className="text-gray-700 font-semibold">German</p>
-                          <a
-                            href="tel:786-344-3706"
-                            className="text-amber-700 hover:text-amber-800 font-bold"
-                          >
-                            786.344.3706
-                          </a>
+                          <p className="text-gray-600 text-sm mt-1">
+                            Call the emergency line or office number above so
+                            Caribbean Property can dispatch on-site staff. We do
+                            not publish personal mobile numbers on this site.
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -1647,7 +1673,7 @@ export default function HomePage() {
           </div>
           <Separator className="my-6 bg-gray-700" />
           <div className="text-center text-gray-400 text-sm">
-            <p>&copy; 2025 River Run Condominium. All rights reserved.</p>
+            <p>&copy; 2026 River Run Condominium. All rights reserved.</p>
           </div>
         </div>
       </footer>

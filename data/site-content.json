@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "board": [
+    {
+      "id": "1778540518232-d901d6020c6298",
+      "name": "Miguel Fernandez",
+      "position": "P",
+      "email": "miguel.fernandez006@mymdc.net",
+      "phone": "7864173869",
+      "photoUrl": null,
+      "createdAt": "2026-05-11T23:01:58.232Z"
+    }
+  ],
+  "announcements": [
+    {
+      "id": "1778540725473-5b35c3d9c610b",
+      "title": "",
+      "content": "",
+      "dateLabel": "",
+      "type": "Update",
+      "createdAt": "2026-05-11T23:05:25.473Z"
+    },
+    {
+      "id": "1778540702148-c8b637d080ecb",
+      "title": "Almost time for a paintjob!",
+      "content": "Good new! We're almost time for paint!",
+      "dateLabel": "5/11/2026",
+      "type": "Update",
+      "createdAt": "2026-05-11T23:05:02.148Z"
+    }
+  ]
+}

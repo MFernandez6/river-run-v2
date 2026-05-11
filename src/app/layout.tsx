@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://river-run-miami.com"),
+  metadataBase: new URL("https://riverrunmiami.com"),
   title: "River Run Miami",
   description:
     "River Run Condominium - Luxury waterfront living in Miami, FL. Experience elegant architecture, premium amenities, and direct access to the North River.",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     title: "River Run Condominium - Luxury Waterfront Living in Miami",
     description:
       "Luxury waterfront living in Miami, FL. Experience elegant architecture, premium amenities, and direct access to the North River.",
-    url: "https://river-run-miami.com",
+    url: "https://riverrunmiami.com",
     siteName: "River Run Condominium",
     images: [
       {

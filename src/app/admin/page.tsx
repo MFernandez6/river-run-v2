@@ -41,17 +41,13 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [b, a] = await Promise.all([
-        fetch("/api/admin/board", { credentials: "same-origin" }).then((r) =>
-          r.json()
-        ),
-        fetch("/api/admin/announcements", { credentials: "same-origin" }).then((r) =>
-          r.json()
-        ),
-      ]);
+      const res = await fetch("/api/admin/site-content", {
+        credentials: "same-origin",
+      });
+      const data = await res.json().catch(() => null);
       if (cancelled) return;
-      setBoard(Array.isArray(b?.items) ? b.items : []);
-      setAnnouncements(Array.isArray(a?.items) ? a.items : []);
+      setBoard(Array.isArray(data?.board) ? data.board : []);
+      setAnnouncements(Array.isArray(data?.announcements) ? data.announcements : []);
       setLoading(false);
     })();
     return () => {
@@ -63,21 +59,16 @@ export default function AdminDashboardPage() {
     setSaving(true);
     setBanner(null);
     try {
-      const res = await Promise.all([
-        fetch("/api/admin/board", {
-          method: "PUT",
-          credentials: "same-origin",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ items: board }),
+      const res = await fetch("/api/admin/site-content", {
+        method: "PUT",
+        credentials: "same-origin",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          board,
+          announcements: announcements.slice(0, 4),
         }),
-        fetch("/api/admin/announcements", {
-          method: "PUT",
-          credentials: "same-origin",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ items: announcements.slice(0, 4) }),
-        }),
-      ]);
-      if (res.some((r) => !r.ok)) throw new Error("Save failed");
+      });
+      if (!res.ok) throw new Error("Save failed");
       setBanner("ok");
       router.refresh();
     } catch {
@@ -171,7 +162,7 @@ export default function AdminDashboardPage() {
                         id: uid(),
                         name: "",
                         position: "",
-                        email: "rrcboardemail@gmail.com",
+                        email: "",
                         phone: "",
                         photoUrl: null,
                         createdAt: new Date().toISOString(),

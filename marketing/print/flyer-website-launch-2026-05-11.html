@@ -1,0 +1,241 @@
+<!-- print: flyer-website-launch-2026-05-11.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>River Run Website Flyer</title>
+  <style>
+    @page {
+      size: letter;
+      margin: 0.5in;
+    }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; }
+      .no-print { display: none; }
+    }
+
+    * { color: #000 !important; background: #fff !important; }
+
+    :root {
+      --black: #000;
+      --white: #fff;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--white);
+      color: var(--black);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 11pt;
+      line-height: 1.35;
+    }
+
+    .page {
+      box-sizing: border-box;
+      min-height: 10in;
+      border: 4px solid var(--black);
+      padding: 0.28in;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2in;
+    }
+
+    .masthead,
+    .footer {
+      background: var(--black) !important;
+      color: var(--white) !important;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .masthead {
+      padding: 0.14in 0.18in;
+      font-size: 15pt;
+    }
+
+    .footer {
+      margin-top: auto;
+      padding: 0.12in 0.18in;
+      font-size: 11pt;
+      letter-spacing: 0.03em;
+      text-transform: none;
+    }
+
+    .masthead *,
+    .footer * {
+      background: var(--black) !important;
+      color: var(--white) !important;
+    }
+
+    .headline {
+      margin: 0.1in 0 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 34pt;
+      line-height: 1.03;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .subheadline {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 17pt;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .website-box {
+      border: 3px solid var(--black);
+      padding: 0.18in;
+      text-align: center;
+    }
+
+    .website-label {
+      margin: 0 0 0.04in;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12pt;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .website-url {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 30pt;
+      font-weight: 700;
+      line-height: 1.05;
+      word-break: break-word;
+    }
+
+    .section {
+      border-top: 2px solid var(--black);
+      padding-top: 0.16in;
+    }
+
+    .section-title {
+      margin: 0 0 0.08in;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14pt;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.22in;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 0.22in;
+    }
+
+    li {
+      margin: 0 0 0.06in;
+      font-size: 11.5pt;
+    }
+
+    .note {
+      border: 2px solid var(--black);
+      padding: 0.14in;
+      font-size: 11.5pt;
+      text-align: center;
+    }
+
+    .contact-line {
+      margin: 0.04in 0 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12pt;
+      font-weight: 700;
+    }
+
+    .screen-only {
+      margin: 0 0 0.15in;
+      padding: 0.1in;
+      border: 2px dashed var(--black);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10pt;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <p class="screen-only no-print">
+    Print on US Letter paper at 100% scale. Black-and-white only.
+  </p>
+
+  <main class="page" aria-label="River Run Condominium website awareness flyer">
+    <header class="masthead">
+      River Run Condominium
+    </header>
+
+    <h1 class="headline">Stay Informed</h1>
+    <p class="subheadline">Visit your building website for updates, documents, and contact information.</p>
+
+    <section class="website-box" aria-label="Website address">
+      <p class="website-label">Building Website</p>
+      <p class="website-url">riverrunmiami.com</p>
+    </section>
+
+    <section class="section" aria-labelledby="english-title">
+      <h2 class="section-title" id="english-title">English</h2>
+      <div class="columns">
+        <div>
+          <ul>
+            <li>Read building announcements and community updates.</li>
+            <li>Find board updates and meeting information.</li>
+            <li>Access important building documents in one place.</li>
+          </ul>
+        </div>
+        <div>
+          <ul>
+            <li>Review resources, rules, insurance information, and forms.</li>
+            <li>Find contact details for the board and property management.</li>
+            <li>Check the website before calling with routine questions.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="spanish-title" lang="es">
+      <h2 class="section-title" id="spanish-title">Español</h2>
+      <div class="columns">
+        <div>
+          <ul>
+            <li>Lea anuncios del edificio y actualizaciones de la comunidad.</li>
+            <li>Encuentre noticias de la junta e informacion sobre reuniones.</li>
+            <li>Acceda documentos importantes del edificio en un solo lugar.</li>
+          </ul>
+        </div>
+        <div>
+          <ul>
+            <li>Revise recursos, reglas, informacion de seguro y formularios.</li>
+            <li>Encuentre contactos de la junta y de la administracion.</li>
+            <li>Consulte el sitio web antes de llamar con preguntas rutinarias.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="note" aria-label="Contact information">
+      Questions? Visit the website or email the board.
+      <p class="contact-line">board@riverrunmiami.com</p>
+      <p class="contact-line">Property Management: 305-251-3848</p>
+    </section>
+
+    <footer class="footer">
+      riverrunmiami.com
+    </footer>
+  </main>
+</body>
+</html>
