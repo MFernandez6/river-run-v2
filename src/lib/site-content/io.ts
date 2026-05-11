@@ -5,23 +5,43 @@ import { githubContentConfig, localSiteContentFile } from "@/lib/site-content/en
 
 const GH_ACCEPT = "application/vnd.github+json";
 const GH_API = "https://api.github.com";
+/** GitHub rejects API calls without a descriptive User-Agent (common on serverless). */
+const GH_HEADERS_BASE = {
+  Accept: GH_ACCEPT,
+  "X-GitHub-Api-Version": "2022-11-28",
+  "User-Agent": "RiverRunCondo-site/1.0 (admin-content; +https://riverrunmiami.com)",
+} as const;
 
 type GithubMeta = { sha?: string; text: string };
+
+function githubErrorMessage(status: number, bodyText: string): string {
+  let detail = bodyText.slice(0, 400).trim();
+  try {
+    const j = JSON.parse(bodyText) as { message?: string; errors?: unknown };
+    if (typeof j.message === "string") detail = j.message;
+  } catch {
+    /* keep raw slice */
+  }
+  return `GitHub ${status}: ${detail || "(no body)"}`;
+}
 
 async function fetchGithubFile(): Promise<GithubMeta> {
   const cfg = githubContentConfig();
   if (!cfg) throw new Error("GitHub content is not configured");
 
-  const url = `${GH_API}/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(
-    cfg.filePath,
-  )}?ref=${encodeURIComponent(cfg.branch)}`;
+  const pathInUrl = cfg.filePath
+    .split("/")
+    .map((s) => encodeURIComponent(s))
+    .join("/");
+  const url = `${GH_API}/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(
+    cfg.repo,
+  )}/contents/${pathInUrl}?ref=${encodeURIComponent(cfg.branch)}`;
 
   const res = await fetch(url, {
     cache: "no-store",
     headers: {
-      Accept: GH_ACCEPT,
+      ...GH_HEADERS_BASE,
       Authorization: `Bearer ${cfg.token}`,
-      "X-GitHub-Api-Version": "2022-11-28",
     },
   });
 
@@ -30,7 +50,7 @@ async function fetchGithubFile(): Promise<GithubMeta> {
   }
   if (!res.ok) {
     const t = await res.text().catch(() => "");
-    throw new Error(`GitHub read failed (${res.status}): ${t.slice(0, 200)}`);
+    throw new Error(`GitHub read failed — ${githubErrorMessage(res.status, t)}`);
   }
 
   const json = (await res.json()) as {
@@ -49,9 +69,13 @@ async function putGithubFile(body: string, sha: string | undefined) {
   const cfg = githubContentConfig();
   if (!cfg) throw new Error("GitHub content is not configured");
 
-  const url = `${GH_API}/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(
-    cfg.filePath,
-  )}`;
+  const pathInUrl = cfg.filePath
+    .split("/")
+    .map((s) => encodeURIComponent(s))
+    .join("/");
+  const url = `${GH_API}/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(
+    cfg.repo,
+  )}/contents/${pathInUrl}`;
   const content = Buffer.from(body, "utf8").toString("base64");
   const payload: Record<string, string> = {
     message: "chore(site): update board & announcements [admin]",
@@ -64,9 +88,8 @@ async function putGithubFile(body: string, sha: string | undefined) {
     method: "PUT",
     cache: "no-store",
     headers: {
-      Accept: GH_ACCEPT,
+      ...GH_HEADERS_BASE,
       Authorization: `Bearer ${cfg.token}`,
-      "X-GitHub-Api-Version": "2022-11-28",
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
@@ -74,7 +97,7 @@ async function putGithubFile(body: string, sha: string | undefined) {
 
   if (!res.ok) {
     const t = await res.text().catch(() => "");
-    throw new Error(`GitHub write failed (${res.status}): ${t.slice(0, 300)}`);
+    throw new Error(`GitHub write failed — ${githubErrorMessage(res.status, t)}`);
   }
 }
 

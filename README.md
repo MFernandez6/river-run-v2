@@ -28,6 +28,14 @@ Optional: `GITHUB_CONTENT_BRANCH` (default `main`), `SITE_CONTENT_PATH` (default
 3. Confirm production has GitHub env vars so saves from the admin UI succeed (watch the repo for commits to `data/site-content.json`).
 4. Share **`/admin/login`** and the admin password only with current officers; rotate the password when the board turns over.
 
+### If admin save returns 500 on Vercel
+
+- Open **admin** again after deploy: the red banner should show the **exact GitHub error** (token, permissions, branch, or SSO).
+- **Fine-grained PAT:** repository access must include **this** repo; permission **Contents: Read and write**.
+- **GitHub organization + SAML SSO:** open GitHub → **Settings → Developer settings → Fine-grained tokens** → your token → **Configure SSO** → **Authorize** for the org.
+- **`GITHUB_CONTENT_BRANCH`:** must match the branch Vercel deploys from (often `main`). Wrong branch can cause read/write failures.
+- **`GITHUB_REPO_OWNER` / `GITHUB_REPO_NAME`:** must match the repo URL (owner is user or org, name is the repo slug only).
+
 ## Getting started
 
 ```bash

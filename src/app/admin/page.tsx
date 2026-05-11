@@ -32,6 +32,7 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [banner, setBanner] = useState<"ok" | "err" | null>(null);
+  const [bannerDetail, setBannerDetail] = useState<string | null>(null);
 
   const [board, setBoard] = useState<BoardMember[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -46,6 +47,15 @@ export default function AdminDashboardPage() {
       });
       const data = await res.json().catch(() => null);
       if (cancelled) return;
+      if (!res.ok) {
+        const msg =
+          typeof data?.error === "string" ? data.error : `Load failed (${res.status})`;
+        setBannerDetail(msg);
+        setBanner("err");
+      } else {
+        setBanner(null);
+        setBannerDetail(null);
+      }
       setBoard(Array.isArray(data?.board) ? data.board : []);
       setAnnouncements(Array.isArray(data?.announcements) ? data.announcements : []);
       setLoading(false);
@@ -58,6 +68,7 @@ export default function AdminDashboardPage() {
   async function saveAll() {
     setSaving(true);
     setBanner(null);
+    setBannerDetail(null);
     try {
       const res = await fetch("/api/admin/site-content", {
         method: "PUT",
@@ -68,10 +79,20 @@ export default function AdminDashboardPage() {
           announcements: announcements.slice(0, 4),
         }),
       });
-      if (!res.ok) throw new Error("Save failed");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const msg =
+          typeof data?.error === "string"
+            ? data.error
+            : `Save failed (${res.status})`;
+        setBannerDetail(msg);
+        setBanner("err");
+        return;
+      }
       setBanner("ok");
       router.refresh();
     } catch {
+      setBannerDetail("Network error or unexpected response.");
       setBanner("err");
     } finally {
       setSaving(false);
@@ -133,8 +154,13 @@ export default function AdminDashboardPage() {
           </motion.div>
         ) : null}
         {banner === "err" ? (
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 shadow-sm">
-            Save failed. Please try again.
+          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 shadow-sm space-y-2">
+            <p className="font-medium">Something went wrong</p>
+            {bannerDetail ? (
+              <p className="text-xs text-red-900/90 whitespace-pre-wrap break-words font-mono leading-relaxed">
+                {bannerDetail}
+              </p>
+            ) : null}
           </div>
         ) : null}
 
